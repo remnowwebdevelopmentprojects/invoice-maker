@@ -627,7 +627,7 @@ def generate_pdf(quotation_id):
             pdf_file,
             mimetype='application/pdf',
             as_attachment=True,
-            download_name=f'quotation_{quotation.quotation_no}.pdf'
+            download_name=f'{quotation.quotation_no}.pdf'
         )
         
     except Exception as e:

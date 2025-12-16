@@ -21,14 +21,18 @@
         
         .invoice-paper {
             max-width: 210mm;
+            min-height: 100vh;
             background: white;
             margin: 20px auto;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
         
         .content-wrapper {
-            padding: 8% 8% 0 8%;
+            flex: 1;
+            padding: 8% 8% 2% 8%;
             position: relative;
         }
         
@@ -252,6 +256,10 @@
             margin-bottom: 16px;
         }
         
+        .payment-section {
+            grid-column: 1;
+        }
+        
         .payment-section h3 {
             font-size: 12px;
             font-weight: 700;
@@ -320,16 +328,24 @@
         
         .signature-section {
             text-align: right;
+            margin-right: 75px;
+            grid-column: 2;
+            overflow: visible;
+            z-index: 10;
         }
         
         .signature {
             margin-bottom: 6px;
+            overflow: visible;
         }
         
         .signature img {
             height: 80px;
             width: auto;
             max-width: 300px;
+            opacity: 1 !important;
+            visibility: visible !important;
+            filter: none !important;
         }
         
         .signature-line {
@@ -357,17 +373,16 @@
         /* Footer */
         .footer {
             margin-top: auto;
-            width: 100%;
-            padding: 16px 8%;
+            padding-top: 16px;
             border-top: 1px solid #e0e0e0;
             text-align: center;
-            background: white;
         }
         
         .footer-text {
             font-size: 10px;
             color: #999;
             margin-bottom: 6px;
+            text-align: center;
         }
         
         .footer-links {
@@ -378,6 +393,7 @@
             flex-wrap: nowrap;
             font-size: 11px;
             color: #666;
+            text-align: center;
         }
         
         .footer-links span {
@@ -429,7 +445,7 @@
         @media print {
             @page {
                 size: A4;
-                margin: 0 0 60px 0;
+                margin: 0;
             }
             body {
                 background: white;
@@ -449,7 +465,7 @@
                 page-break-after: avoid;
             }
             .content-wrapper {
-                padding: 28px 48px 28px 48px;
+                padding: 28px 48px 60px 48px;
             }
             .client-section + .table-container {
                 page-break-before: avoid !important;
@@ -514,21 +530,43 @@
                 padding-top: 12px;
                 padding-bottom: 12px;
                 page-break-inside: auto;
+                overflow: hidden;
             }
             .bottom-grid {
+           
                 margin-bottom: 12px;
             }
+            
+            .signature-section {
+                page-break-inside: avoid;
+                overflow: visible !important;
+            }
+            
+            .signature {
+                overflow: visible !important;
+            }
+            
+            .signature img {
+                display: block !important;
+                margin-left: auto !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                filter: none !important;
+                height: 80px !important;
+                width: auto !important;
+            }
+          
             .footer {
-                position: absolute;
-                bottom: 20px;
-                left: 48px;
-                right: 48px;
-                width: calc(100% - 96px);
-                padding: 12px 0;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                padding: 12px 48px;
                 border-top: 1px solid #e0e0e0;
                 text-align: center;
                 background: white;
-                page-break-inside: avoid;
+                z-index: 1000;
             }
             .footer-text {
                 font-size: 10px;
@@ -616,15 +654,6 @@
             <!-- Bottom Section -->
             <div class="bottom-section">
                 <div class="bottom-grid">
-                    <!-- Signature -->
-                    <div class="signature-section">
-                        <div class="signature">
-                            <img src="assets/signature.png" alt="Signature" />
-                        </div>
-                        <div class="signature-line"></div>
-                        <p class="signatory-label">Authorized Signatory</p>
-                        <p class="signatory-company">Remnow Solutions</p>
-                    </div>
                     <!-- Payment Info -->
                     <div class="payment-section">
                         <h3>Payment Information</h3>
@@ -636,6 +665,15 @@
                             <div><span class="payment-label">IFSC Code:</span> <span class="payment-value"></span></div>
                             <div><span class="payment-label">Gpay / PhonePe:</span> <span class="payment-value" style="font-weight: 600;"></span></div>
                         </div>
+                    </div>
+                    <!-- Signature -->
+                    <div class="signature-section">
+                        <div class="signature">
+                            <img src="assets/signature.png" alt="Signature" />
+                        </div>
+                        <div class="signature-line"></div>
+                        <p class="signatory-label">Authorized Signatory</p>
+                        <p class="signatory-company">Remnow Solutions</p>
                     </div>
                 </div>
             </div>
