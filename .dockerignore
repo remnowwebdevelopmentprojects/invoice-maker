@@ -1,47 +1,24 @@
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
 *.so
-
-# Virtual environments
-venv/
-env/
-ENV/
-.venv
-
-# Environment files
+*.egg
+*.egg-info
+dist
+build
 .env
-.env.local
-
-# Git
-.git/
+.venv
+venv/
+ENV/
+env/
+.git
 .gitignore
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Documentation
-README.md
-SETUP.md
-
-# Docker
-Dockerfile
-docker-compose.yml
 .dockerignore
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
+docker-compose.yml
+Dockerfile
+*.md
+.vscode
+.idea
+*.log

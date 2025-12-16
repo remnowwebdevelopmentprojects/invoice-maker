@@ -1,28 +1,38 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: invoice_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: remnow_invoice
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   web:
     build: .
-    container_name: invoice-maker-app
+    container_name: invoice_web
+    restart: always
     ports:
       - "5000:5000"
     environment:
-      # Database connection string - Replace with your Supabase connection string
-      - SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
-      # Secret key for Flask sessions - Change this to a random string
-      - SECRET_KEY=${SECRET_KEY}
+      - SQLALCHEMY_DATABASE_URI=postgresql://postgres:12345@db:5432/remnow_invoice
+      - SECRET_KEY=your-secret-key-here-change-in-production
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
-      # Mount assets folder for persistent storage (optional)
-      - ./assets:/app/assets
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - .:/app
 
-# Networks
-networks:
-  default:
-    name: invoice-maker-network
+volumes:
+  postgres_data:

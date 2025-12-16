@@ -24,6 +24,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here-change-in-production')
 
+# Database connection pool settings for better stability
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,  # Verify connections before using them
+    'pool_recycle': 300,    # Recycle connections after 5 minutes
+    'pool_size': 10,        # Number of connections to maintain
+    'max_overflow': 20,     # Max connections beyond pool_size
+    'connect_args': {
+        'connect_timeout': 10,
+        'options': '-c statement_timeout=30000'  # 30 second query timeout
+    }
+}
+
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
