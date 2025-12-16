@@ -429,7 +429,7 @@
         @media print {
             @page {
                 size: A4;
-                margin: 0;
+                margin: 0 0 60px 0;
             }
             body {
                 background: white;
@@ -438,6 +438,7 @@
             }
             .invoice-paper {
                 width: 210mm;
+                min-height: 297mm;
                 margin: 0;
                 padding: 0;
                 box-shadow: none;
@@ -490,16 +491,19 @@
                 page-break-inside: auto;
             }
             tbody tr {
-                page-break-inside: auto;
-                break-inside: auto;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
             tbody tr:first-child {
                 page-break-before: avoid !important;
             }
             /* Keep Sub Total and Total rows together */
             tbody tr.total-row-subtotal {
-                page-break-before: avoid;
+                page-break-before: auto;
                 page-break-inside: avoid;
+            }
+            tbody tr.total-row-subtotal ~ tr {
+                page-break-before: avoid;
             }
             tbody tr.total-row-final {
                 page-break-before: avoid;
@@ -515,16 +519,30 @@
                 margin-bottom: 12px;
             }
             .footer {
-                margin-top: 20px;
-                width: 100%;
-                padding: 16px 0;
+                position: absolute;
+                bottom: 20px;
+                left: 48px;
+                right: 48px;
+                width: calc(100% - 96px);
+                padding: 12px 0;
                 border-top: 1px solid #e0e0e0;
                 text-align: center;
                 background: white;
-                page-break-inside: auto;
+                page-break-inside: avoid;
+            }
+            .footer-text {
+                font-size: 10px;
+                color: #999;
+                margin-bottom: 4px;
             }
             .footer-links span {
                 white-space: nowrap;
+                font-size: 10px;
+            }
+            /* Reset content wrapper padding */
+            .content-wrapper {
+                padding: 28px 48px 100px 48px;
+                min-height: calc(297mm - 120px);
             }
         }
     </style>

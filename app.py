@@ -57,6 +57,7 @@ class Quotation(db.Model):
     quotation_no = db.Column(db.String(100), unique=True, nullable=False)
     date = db.Column(db.Date, nullable=False)
     to_address = db.Column(db.Text, nullable=False)
+    client_phone = db.Column(db.String(50))
     currency = db.Column(db.String(10), nullable=False, default='INR')
     document_type = db.Column(db.String(20), nullable=False, default='invoice')
     payment_status = db.Column(db.String(20), nullable=False, default='unpaid')
@@ -300,6 +301,7 @@ def create_quotation():
             quotation_no=data['quotation_no'],
             date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
             to_address=data['to_address'],
+            client_phone=data.get('client_phone', ''),
             currency=data['currency'],
             document_type=data.get('document_type', 'invoice'),
             payment_status=data.get('payment_status', 'unpaid'),
@@ -352,6 +354,7 @@ def update_quotation(quotation_id):
         quotation.quotation_no = data['quotation_no']
         quotation.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
         quotation.to_address = data['to_address']
+        quotation.client_phone = data.get('client_phone', '')
         quotation.currency = data['currency']
         quotation.document_type = data.get('document_type', 'invoice')
         quotation.payment_status = data.get('payment_status', 'unpaid')
@@ -536,48 +539,28 @@ def generate_pdf(quotation_id):
                              html_content,
                              flags=re.DOTALL)
         
-        # Smart table splitting
-        num_items = len(quotation.items)
-        first_table_html, second_table_html = split_table_html(items_html, num_items)
+        # Update currency symbol in table header
+        if quotation.currency == 'USD':
+            currency_label = 'Amount ($)'
+        elif quotation.currency == 'INR':
+            currency_label = 'Amount (Rs)'
+        elif quotation.currency == 'EUR':
+            currency_label = 'Amount (€)'
+        elif quotation.currency == 'GBP':
+            currency_label = 'Amount (£)'
+        else:
+            currency_label = f'Amount ({quotation.currency})'
         
+        html_content = re.sub(r'<th class="text-right"[^>]*>Amount \([^)]+\)</th>',
+                             f'<th class="text-right" style="width: 15%;">{currency_label}</th>',
+                             html_content)
+        
+        # Insert all items into the table - let CSS handle pagination naturally
         items_pattern = r'(<tbody>\s*)<!--.*?-->(\s*</tbody>)'
         html_content = re.sub(items_pattern,
-                             f'\\1\n{first_table_html}                    \\2',
+                             f'\\1\n{items_html}                    \\2',
                              html_content,
                              flags=re.DOTALL)
-        
-        # Insert second table if needed (after first table container)
-        if second_table_html:
-            # Find the closing tag of the first table container
-            # Look for: </table>\n    </div> followed by optional whitespace and comments
-            # This ensures we insert right after the first table, before any other content
-            table_close_patterns = [
-                r'(</table>\s*</div>\s*\n\s*\n\s*<!-- Totals)',
-                r'(</table>\s*</div>\s*\n\s*\n\s*<!-- Spacer)',
-                r'(</table>\s*</div>\s*\n\s*\n\s*<!--)',
-                r'(</table>\s*</div>\s*\n\s*</div>)',  # Before closing content-wrapper
-                r'(</table>\s*</div>)',  # Fallback: any table close
-            ]
-            
-            inserted = False
-            for pattern in table_close_patterns:
-                match = re.search(pattern, html_content, re.MULTILINE | re.DOTALL)
-                if match:
-                    # Insert second table before the matched content
-                    insert_pos = match.start(1)
-                    html_content = html_content[:insert_pos] + second_table_html + html_content[insert_pos:]
-                    inserted = True
-                    break
-            
-            # Final fallback: use regex substitution
-            if not inserted:
-                html_content = re.sub(
-                    r'(</table>\s*</div>)',
-                    r'\1' + second_table_html,
-                    html_content,
-                    count=1,
-                    flags=re.MULTILINE | re.DOTALL
-                )
         
         if not is_quotation:
             html_content = re.sub(r'(<div><span class="payment-label">Bank Name:</span> <span class="payment-value">)</span></div>',
@@ -607,8 +590,6 @@ def generate_pdf(quotation_id):
             gpay_value = ""
             if quotation.gpay_phonepe:
                 gpay_value = escape(str(quotation.gpay_phonepe).strip())
-            else:
-                gpay_value = "+91 9994164140"
             
             html_content = html_content.replace(
                 '<span class="payment-label">Gpay / PhonePe:</span> <span class="payment-value" style="font-weight: 600;"></span>',
@@ -617,8 +598,10 @@ def generate_pdf(quotation_id):
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
         
-        # WeasyPrint handles file paths differently - use absolute paths
-        html_content = html_content.replace('src="assets/', f'src="{base_dir}/assets/')
+        # WeasyPrint needs file:// URLs for local assets on Windows
+        # Convert backslashes to forward slashes for proper URI format
+        assets_path = os.path.join(base_dir, 'assets').replace('\\', '/')
+        html_content = html_content.replace('src="assets/', f'src="file:///{assets_path}/')
         
         try:
             # Create WeasyPrint HTML object
@@ -918,8 +901,6 @@ def view_shared_pdf(token):
             gpay_value = ""
             if quotation.gpay_phonepe:
                 gpay_value = escape(str(quotation.gpay_phonepe).strip())
-            else:
-                gpay_value = "+91 9994164140"
             
             html_content = html_content.replace(
                 '<span class="payment-label">Gpay / PhonePe:</span> <span class="payment-value" style="font-weight: 600;"></span>',
@@ -1115,19 +1096,20 @@ def split_table_html(items_html, num_items):
     if num_items <= ITEMS_PER_PAGE:
         return items_html, None
     
-    # Find where totals start - try multiple markers
-    totals_markers = ['total-row-subtotal', 'total-row-final', 'Sub Total', 'Total (']
-    totals_pos = -1
-    for marker in totals_markers:
-        pos = items_html.find(marker)
-        if pos >= 0:
-            totals_pos = pos
-            break
+    # Find where totals start - look for the actual <tr> tag with the class
+    totals_pattern = r'(<tr\s+class="total-row-subtotal">)'
+    totals_match = re.search(totals_pattern, items_html)
     
-    if totals_pos < 0:
+    if not totals_match:
+        # Try alternate pattern for final totals
+        totals_pattern = r'(<tr\s+class="total-row-final">)'
+        totals_match = re.search(totals_pattern, items_html)
+    
+    if not totals_match:
         # No totals found, return as-is
         return items_html, None
     
+    totals_pos = totals_match.start()
     items_only = items_html[:totals_pos].strip()
     totals_html = items_html[totals_pos:]
     
@@ -1352,51 +1334,35 @@ def generate_pdf_content(quotation):
                              html_content,
                              flags=re.DOTALL)
         
-        # Smart table splitting
-        num_items = len(quotation.items)
-        first_table_html, second_table_html = split_table_html(items_html, num_items)
+        # Update currency symbol in table header
+        if quotation.currency == 'USD':
+            currency_label = 'Amount ($)'
+        elif quotation.currency == 'INR':
+            currency_label = 'Amount (Rs)'
+        elif quotation.currency == 'EUR':
+            currency_label = 'Amount (€)'
+        elif quotation.currency == 'GBP':
+            currency_label = 'Amount (£)'
+        else:
+            currency_label = f'Amount ({quotation.currency})'
         
+        html_content = re.sub(r'<th class="text-right"[^>]*>Amount \([^)]+\)</th>',
+                             f'<th class="text-right" style="width: 15%;">{currency_label}</th>',
+                             html_content)
+        
+        # Insert all items into the table - let CSS handle pagination naturally
         items_pattern = r'(<tbody>\s*)<!--.*?-->(\s*</tbody>)'
         html_content = re.sub(items_pattern,
-                             f'\\1\n{first_table_html}                    \\2',
+                             f'\\1\n{items_html}                    \\2',
                              html_content,
                              flags=re.DOTALL)
         
-        # Insert second table if needed (after first table container)
-        if second_table_html:
-            # Find the closing tag of the first table container
-            # Look for: </table>\n    </div> followed by optional whitespace and comments
-            # This ensures we insert right after the first table, before any other content
-            table_close_patterns = [
-                r'(</table>\s*</div>\s*\n\s*\n\s*<!-- Totals)',
-                r'(</table>\s*</div>\s*\n\s*\n\s*<!-- Spacer)',
-                r'(</table>\s*</div>\s*\n\s*\n\s*<!--)',
-                r'(</table>\s*</div>\s*\n\s*</div>)',  # Before closing content-wrapper
-                r'(</table>\s*</div>)',  # Fallback: any table close
-            ]
-            
-            inserted = False
-            for pattern in table_close_patterns:
-                match = re.search(pattern, html_content, re.MULTILINE | re.DOTALL)
-                if match:
-                    # Insert second table before the matched content
-                    insert_pos = match.start(1)
-                    html_content = html_content[:insert_pos] + second_table_html + html_content[insert_pos:]
-                    inserted = True
-                    break
-            
-            # Final fallback: use regex substitution
-            if not inserted:
-                html_content = re.sub(
-                    r'(</table>\s*</div>)',
-                    r'\1' + second_table_html,
-                    html_content,
-                    count=1,
-                    flags=re.MULTILINE | re.DOTALL
-                )
-        
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        html_content = html_content.replace('src="assets/', f'src="file://{base_dir}/assets/')
+        
+        # WeasyPrint needs file:// URLs for local assets on Windows
+        # Convert backslashes to forward slashes for proper URI format
+        assets_path = os.path.join(base_dir, 'assets').replace('\\', '/')
+        html_content = html_content.replace('src="assets/', f'src="file:///{assets_path}/')
         
         if not is_quotation:
             html_content = re.sub(r'(<div><span class="payment-label">Bank Name:</span> <span class="payment-value">)</span></div>',
@@ -1427,17 +1393,10 @@ def generate_pdf_content(quotation):
             gpay_value = ""
             if quotation.gpay_phonepe:
                 gpay_value = escape(str(quotation.gpay_phonepe).strip())
-            else:
-                gpay_value = "+91 9994164140"
             html_content = html_content.replace(
                 '<span class="payment-label">Gpay / PhonePe:</span> <span class="payment-value" style="font-weight: 600;"></span>',
                 f'<span class="payment-label">Gpay / PhonePe:</span> <span class="payment-value" style="font-weight: 600;">{gpay_value}</span>'
             )
-        
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # WeasyPrint handles file paths differently - use absolute paths
-        html_content = html_content.replace('src="assets/', f'src="{base_dir}/assets/')
         
         # Create WeasyPrint HTML object
         html_doc = HTML(string=html_content, base_url=base_dir)

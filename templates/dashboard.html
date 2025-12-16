@@ -623,9 +623,9 @@
                         </select>
                     </div>
                 </div>
-                <!-- GST Type Section (only for INR) -->
-                <div id="gstTypeSection" class="grid grid-cols-4 gap-3" style="display: none;">
-                    <div class="form-control">
+                <!-- GST Type & Bill To in same row -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div id="gstTypeSection" style="display: none;">
                         <label class="label py-1"><span class="label-text font-semibold text-sm">GST Type</span></label>
                         <div class="flex gap-4">
                             <label class="label cursor-pointer gap-2">
@@ -638,8 +638,6 @@
                             </label>
                         </div>
                     </div>
-                </div>
-                <div class="grid grid-cols-4 gap-3">
                     <div class="form-control">
                         <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Name)</span></label>
                         <input type="text" id="client_name" class="input input-bordered input-sm" placeholder="Client Name" required>
@@ -648,6 +646,11 @@
                 <div class="form-control">
                     <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Address)</span></label>
                     <textarea id="client_address" class="textarea textarea-bordered textarea-sm" rows="2" placeholder="Address line 1&#10;Address line 2" required></textarea>
+                </div>
+                
+                <div class="form-control">
+                    <label class="label py-1"><span class="label-text font-semibold text-sm">Phone Number</span></label>
+                    <input type="tel" id="client_phone" class="input input-bordered input-sm" placeholder="+91 1234567890">
                 </div>
                 
                 <!-- Items Section -->
@@ -712,30 +715,30 @@
                 <!-- Payment Info -->
                 <div id="paymentSection">
                     <div class="divider my-4">Payment Information</div>
-                    <div class="grid grid-cols-4 gap-2">
+                    <div class="grid grid-cols-3 gap-3">
                         <div class="form-control">
-                            <label class="label py-0"><span class="label-text text-xs">Bank Name</span></label>
-                            <input type="text" id="bank_name" class="input input-bordered input-xs" placeholder="Canara Bank">
+                            <label class="label py-1"><span class="label-text font-semibold text-sm">Bank Name</span></label>
+                            <input type="text" id="bank_name" class="input input-bordered input-sm" placeholder="Canara Bank">
                         </div>
                         <div class="form-control">
-                            <label class="label py-0"><span class="label-text text-xs">Branch</span></label>
-                            <input type="text" id="branch_name" class="input input-bordered input-xs" placeholder="Branch Name">
+                            <label class="label py-1"><span class="label-text font-semibold text-sm">Branch</span></label>
+                            <input type="text" id="branch_name" class="input input-bordered input-sm" placeholder="Branch Name">
                         </div>
                         <div class="form-control">
-                            <label class="label py-0"><span class="label-text text-xs">Account Name</span></label>
-                            <input type="text" id="account_name" class="input input-bordered input-xs" placeholder="Account Holder">
+                            <label class="label py-1"><span class="label-text font-semibold text-sm">Account Name</span></label>
+                            <input type="text" id="account_name" class="input input-bordered input-sm" placeholder="Account Holder">
                         </div>
                         <div class="form-control">
-                            <label class="label py-0"><span class="label-text text-xs">Account No</span></label>
-                            <input type="text" id="account_number" class="input input-bordered input-xs" placeholder="1234567890">
+                            <label class="label py-1"><span class="label-text font-semibold text-sm">Account No</span></label>
+                            <input type="text" id="account_number" class="input input-bordered input-sm" placeholder="1234567890">
                         </div>
                         <div class="form-control">
-                            <label class="label py-0"><span class="label-text text-xs">IFSC Code</span></label>
-                            <input type="text" id="ifsc_code" class="input input-bordered input-xs" placeholder="IFSC Code">
+                            <label class="label py-1"><span class="label-text font-semibold text-sm">IFSC Code</span></label>
+                            <input type="text" id="ifsc_code" class="input input-bordered input-sm" placeholder="IFSC Code">
                         </div>
                         <div class="form-control">
-                            <label class="label py-0"><span class="label-text text-xs">Gpay / PhonePe</span></label>
-                            <input type="text" id="gpay_phonepe" class="input input-bordered input-xs" placeholder="+91 9994164140">
+                            <label class="label py-1"><span class="label-text font-semibold text-sm">Gpay / PhonePe</span></label>
+                            <input type="text" id="gpay_phonepe" class="input input-bordered input-sm" placeholder="+91 9994164140">
                         </div>
                     </div>
                 </div>
@@ -894,6 +897,7 @@
                 document.getElementById('date').value = data.date;
                 document.getElementById('client_name').value = clientName;
                 document.getElementById('client_address').value = clientAddress;
+                document.getElementById('client_phone').value = data.client_phone || '';
                 document.getElementById('currency').value = data.currency;
                 document.getElementById('payment_status').value = data.payment_status || 'unpaid';
                 document.getElementById('bank_name').value = data.bank_name || '';
@@ -1178,10 +1182,16 @@
 
         async function saveQuotation() {
             const currency = document.getElementById('currency').value;
+            const clientPhone = document.getElementById('client_phone').value;
+            let toAddress = document.getElementById('client_name').value + '\n' + document.getElementById('client_address').value;
+            if (clientPhone) {
+                toAddress += '\n' + clientPhone;
+            }
             const formData = {
                 quotation_no: document.getElementById('quotation_no').value,
                 date: document.getElementById('date').value,
-                to_address: document.getElementById('client_name').value + '\n' + document.getElementById('client_address').value,
+                to_address: toAddress,
+                client_phone: clientPhone,
                 currency: currency,
                 document_type: documentType,
                 payment_status: document.getElementById('payment_status').value,

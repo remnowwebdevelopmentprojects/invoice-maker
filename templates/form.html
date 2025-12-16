@@ -70,6 +70,15 @@
                     
                     <div class="form-control">
                         <label class="label">
+                            <span class="label-text font-semibold">Phone Number</span>
+                        </label>
+                        <input type="tel" id="client_phone" name="client_phone" 
+                               placeholder="Enter phone number (e.g., +91 1234567890)" 
+                               class="input input-bordered w-full" />
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
                             <span class="label-text font-semibold">Currency *</span>
                         </label>
                         <select id="currency" name="currency" class="select select-bordered w-full" required>
@@ -255,6 +264,7 @@
                 quotation_no: document.getElementById('quotation_no').value,
                 date: document.getElementById('date').value,
                 to_address: document.getElementById('to_address').value,
+                client_phone: document.getElementById('client_phone').value,
                 currency: document.getElementById('currency').value,
                 bank_name: document.getElementById('bank_name').value,
                 branch_name: document.getElementById('branch_name').value,

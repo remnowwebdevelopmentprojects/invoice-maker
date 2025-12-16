@@ -120,8 +120,10 @@
                     <textarea id="client_address" class="textarea textarea-bordered textarea-sm" rows="2" placeholder="Address line 1&#10;Address line 2" required></textarea>
                 </div>
 
-
-                
+                <div class="form-control">
+                    <label class="label py-1"><span class="label-text font-semibold text-sm">Phone Number</span></label>
+                    <input type="tel" id="client_phone" class="input input-bordered input-sm" placeholder="+91 1234567890">
+                </div>
 
                 <!-- Items Section -->
                 <div class="mt-4">
@@ -295,10 +297,16 @@
         }
 
         async function saveQuotation() {
+            const clientPhone = document.getElementById('client_phone').value;
+            let toAddress = document.getElementById('client_name').value + '\n' + document.getElementById('client_address').value;
+            if (clientPhone) {
+                toAddress += '\n' + clientPhone;
+            }
             const formData = {
                 quotation_no: document.getElementById('quotation_no').value,
                 date: document.getElementById('date').value,
-                to_address: document.getElementById('client_name').value + '\n' + document.getElementById('client_address').value,
+                to_address: toAddress,
+                client_phone: clientPhone,
                 currency: document.getElementById('currency').value,
                 document_type: documentType,
                 payment_status: document.getElementById('payment_status').value,
@@ -369,6 +377,7 @@
             document.getElementById('date').value = quotationData.date;
             document.getElementById('client_name').value = clientName;
             document.getElementById('client_address').value = clientAddress;
+            document.getElementById('client_phone').value = quotationData.client_phone || '';
             document.getElementById('currency').value = quotationData.currency;
             document.getElementById('payment_status').value = quotationData.payment_status || 'unpaid';
             document.getElementById('bank_name').value = quotationData.bank_name || '';
