@@ -21,6 +21,14 @@
         .tab.tab-active svg {
             color: #2563eb !important;
         }
+        .voided-invoice {
+            background-color: #fee2e2 !important;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .voided-invoice:hover {
+            background-color: #fecaca !important;
+        }
     </style>
 </head>
 <body class="bg-white min-h-screen">
@@ -138,29 +146,40 @@
                             <td class="py-3 px-4 text-gray-600">{{ quotation.to_address.split('\n')[0] if quotation.to_address else 'N/A' }}</td>
                             <td class="py-3 px-4 font-semibold text-gray-900">{{ quotation.currency }} {{ quotation.total_amount }}</td>
                             <td class="py-3 px-4">
-                                <div class="flex gap-1">
-                                    <button onclick="openEditModal({{ quotation.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                <div class="relative">
+                                    <button onclick="toggleActionMenu(event, 'quotation-{{ quotation.id }}')" class="inline-flex items-center px-2 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                                         </svg>
                                     </button>
-                                    
-                                    <a href="/api/quotation/{{ quotation.id }}/pdf" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors" target="_blank">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                    </a>
-                                    <button onclick="shareOnWhatsApp({{ quotation.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                        </svg>
-                                    </button>
-
-                                    <button onclick="duplicateDocument({{ quotation.id }})" class="inline-flex items-center px-3 py-1.5 text-blue-600 hover:text-blue-800 text-sm font-medium rounded transition-colors" title="Duplicate">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                    </button>
+                                    <div id="quotation-{{ quotation.id }}" class="action-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                        <div class="py-1">
+                                            <button onclick="openEditModal({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                                Edit
+                                            </button>
+                                            <a href="/api/quotation/{{ quotation.id }}/pdf" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                </svg>
+                                                View PDF
+                                            </a>
+                                            <button onclick="shareOnWhatsApp({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                                </svg>
+                                                Share on WhatsApp
+                                            </button>
+                                            <button onclick="duplicateDocument({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Duplicate
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -244,8 +263,13 @@
                     </thead>
                     <tbody class="bg-white">
                         {% for invoice in invoices %}
-                        <tr class="border-b border-gray-200 hover:bg-gray-50" data-date="{{ invoice.date.strftime('%Y-%m') }}" data-search="{{ invoice.quotation_no|lower }} {{ invoice.to_address.split('\n')[0]|lower if invoice.to_address else '' }}" data-payment-status="{{ invoice.payment_status or 'unpaid' }}">
-                            <td class="py-3 px-4 font-medium text-gray-900">{{ invoice.quotation_no }}</td>
+                        <tr class="border-b border-gray-200 hover:bg-gray-50 {% if invoice.voided %}voided-invoice{% endif %}" data-date="{{ invoice.date.strftime('%Y-%m') }}" data-search="{{ invoice.quotation_no|lower }} {{ invoice.to_address.split('\n')[0]|lower if invoice.to_address else '' }}" data-payment-status="{{ invoice.payment_status or 'unpaid' }}">
+                            <td class="py-3 px-4 font-medium text-gray-900">
+                                {{ invoice.quotation_no }}
+                                {% if invoice.voided %}
+                                <span class="ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">VOIDED</span>
+                                {% endif %}
+                            </td>
                             <td class="py-3 px-4 text-gray-600">{{ invoice.date.strftime('%d-%b-%Y') }}</td>
                             <td class="py-3 px-4 text-gray-600">{{ invoice.to_address.split('\n')[0] if invoice.to_address else 'N/A' }}</td>
                             <td class="py-3 px-4 font-semibold text-gray-900">{{ invoice.currency }} {{ invoice.total_amount }}</td>
@@ -255,28 +279,48 @@
                                 </span>
                             </td>
                             <td class="py-3 px-4">
-                                <div class="flex gap-1">
-                                    <button onclick="openEditModal({{ invoice.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                <div class="relative">
+                                    <button onclick="toggleActionMenu(event, 'invoice-{{ invoice.id }}')" class="inline-flex items-center px-2 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                                         </svg>
                                     </button>
-                                   
-                                    <a href="/api/quotation/{{ invoice.id }}/pdf" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors" target="_blank">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                    </a>
-                                    <button onclick="shareOnWhatsApp({{ invoice.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                        </svg>
-                                    </button>
-                                     <button onclick="duplicateDocument({{ invoice.id }})" class="inline-flex items-center px-3 py-1.5 text-blue-600 hover:text-blue-800 text-sm font-medium rounded transition-colors" title="Duplicate">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                    </button>
+                                    <div id="invoice-{{ invoice.id }}" class="action-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                        <div class="py-1">
+                                            <button onclick="openEditModal({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                                Edit
+                                            </button>
+                                            <a href="/api/quotation/{{ invoice.id }}/pdf" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                </svg>
+                                                View PDF
+                                            </a>
+                                            <button onclick="shareOnWhatsApp({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                                </svg>
+                                                Share on WhatsApp
+                                            </button>
+                                            <button onclick="duplicateDocument({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Duplicate
+                                            </button>
+                                            {% if not invoice.voided %}
+                                            <button onclick="voidInvoice({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                                </svg>
+                                                Void Invoice
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -578,11 +622,11 @@
             fetch(`/api/quotation/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    alert(`Details:\n\nQuotation No: ${data.quotation_no}\nDate: ${data.date}\nTotal: ${data.total_amount}\nCurrency: ${data.currency}`);
+                    showToast(`Quotation No: ${data.quotation_no} | Date: ${data.date} | Total: ${data.total_amount} ${data.currency}`, 'info');
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Failed to load details');
+                    showToast('Failed to load details', 'error');
                 });
         }
     </script>
@@ -846,6 +890,35 @@
         </form>
     </dialog>
 
+    <!-- Void Invoice Confirmation Dialog -->
+    <dialog id="voidConfirmDialog" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg mb-4">Void Invoice</h3>
+            <div class="flex items-start gap-3 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-warning flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                    <p class="text-gray-700 mb-2">Are you sure you want to void this invoice?</p>
+                    <ul class="text-sm text-gray-600 space-y-1 ml-4 list-disc">
+                        <li>This action cannot be undone</li>
+             
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button type="button" class="btn btn-ghost" onclick="document.getElementById('voidConfirmDialog').close()">Cancel</button>
+                <button type="button" class="btn btn-error" onclick="confirmVoidInvoice()">Void Invoice</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
     <script>
         let items = [];
         let itemCounter = 0;
@@ -858,6 +931,45 @@
         // User's document number prefixes
         const quotationPrefix = "{{ current_user.quotation_prefix or 'QUO/25-26/' }}";
         const invoicePrefix = "{{ current_user.invoice_prefix or 'INV/25-26/' }}";
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let iconSvg = '';
+            let alertClass = 'alert-info';
+            
+            if (type === 'success') {
+                alertClass = 'alert-success';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            } else if (type === 'error') {
+                alertClass = 'alert-error';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            } else if (type === 'warning') {
+                alertClass = 'alert-warning';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
+            } else {
+                alertClass = 'alert-info';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+            }
+            
+            toast.className = `alert ${alertClass} shadow-lg mb-2`;
+            toast.innerHTML = `
+                ${iconSvg}
+                <span>${message}</span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
         // Load saved items for auto-suggest
         async function loadSavedItems() {
@@ -986,7 +1098,7 @@
                 document.getElementById('createModal').showModal();
                 
             } catch (error) {
-                alert('Failed to load document: ' + error.message);
+                showToast('Failed to load document: ' + error.message, 'error');
             }
         }
         
@@ -1083,7 +1195,7 @@
                 document.getElementById('createModal').showModal();
                 
             } catch (error) {
-                alert('Failed to duplicate document: ' + error.message);
+                showToast('Failed to duplicate document: ' + error.message, 'error');
             }
         }
         
@@ -1362,7 +1474,7 @@
             }
 
             if (!formData.quotation_no || !formData.date || items.length === 0) {
-                alert('Please fill in all required fields and add at least one item');
+                showToast('Please fill in all required fields and add at least one item', 'warning');
                 return;
             }
 
@@ -1378,16 +1490,16 @@
 
                 const data = await response.json();
                 if (response.ok) {
-                    alert(editMode ? 'Document updated successfully!' : 'Document saved successfully!');
+                    showToast(editMode ? 'Document updated successfully!' : 'Document saved successfully!', 'success');
                     window.open(`/api/quotation/${data.id}/pdf`, '_blank');
                     document.getElementById('createModal').close();
                     duplicateMode = false; // Reset duplicate mode
-                    window.location.reload();
+                    setTimeout(() => window.location.reload(), 1000);
                 } else {
-                    alert('Error: ' + data.error);
+                    showToast('Error: ' + data.error, 'error');
                 }
             } catch (error) {
-                alert('Error saving document: ' + error.message);
+                showToast('Error saving document: ' + error.message, 'error');
             }
         }
 
@@ -1405,17 +1517,17 @@
             const paymentStatus = document.getElementById('paymentStatusFilter').value;
             
             if (!fromDate || !toDate) {
-                alert('Please select both from and to dates');
+                showToast('Please select both from and to dates', 'warning');
                 return;
             }
             
             if (!includeQuotations && !includeInvoices) {
-                alert('Please select at least one document type to export');
+                showToast('Please select at least one document type to export', 'warning');
                 return;
             }
             
             if (new Date(fromDate) > new Date(toDate)) {
-                alert('From date cannot be later than to date');
+                showToast('From date cannot be later than to date', 'warning');
                 return;
             }
             
@@ -1451,7 +1563,7 @@
                 const totalDocs = countData.total_documents;
                 
                 if (totalDocs === 0) {
-                    alert('No documents found in the specified date range');
+                    showToast('No documents found in the specified date range', 'info');
                     hideExportProgress();
                     return;
                 }
@@ -1462,7 +1574,7 @@
                 await performBulkExportWithProgress(fromDate, toDate, includeQuotations, includeInvoices, totalDocs, paymentStatus);
                 
             } catch (error) {
-                alert('Export failed: ' + error.message);
+                showToast('Export failed: ' + error.message, 'error');
                 hideExportProgress();
             }
         }
@@ -1595,9 +1707,82 @@
                 window.open(data.whatsapp_url, '_blank');
             } catch (error) {
                 console.error('Error sharing on WhatsApp:', error);
-                alert('Failed to open WhatsApp. Please try again.');
+                showToast('Failed to open WhatsApp. Please try again.', 'error');
             }
         }
+        
+        // Void invoice function
+        let pendingVoidInvoiceId = null;
+        
+        function voidInvoice(invoiceId) {
+            pendingVoidInvoiceId = invoiceId;
+            document.getElementById('voidConfirmDialog').showModal();
+        }
+        
+        async function confirmVoidInvoice() {
+            if (!pendingVoidInvoiceId) return;
+            
+            const dialog = document.getElementById('voidConfirmDialog');
+            dialog.close();
+            
+            try {
+                const response = await fetch(`/api/quotation/${pendingVoidInvoiceId}/void`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to void invoice');
+                }
+                
+                showToast('Invoice voided successfully', 'success');
+                setTimeout(() => window.location.reload(), 1000);
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                pendingVoidInvoiceId = null;
+            }
+        }
+        
+        // Toggle action menu dropdown
+        function toggleActionMenu(event, menuId) {
+            event.stopPropagation();
+            const menu = document.getElementById(menuId);
+            const allMenus = document.querySelectorAll('.action-menu');
+            
+            // Close all other menus
+            allMenus.forEach(m => {
+                if (m.id !== menuId) {
+                    m.classList.add('hidden');
+                }
+            });
+            
+            // Toggle current menu
+            menu.classList.toggle('hidden');
+        }
+        
+        // Close all action menus when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.relative')) {
+                const allMenus = document.querySelectorAll('.action-menu');
+                allMenus.forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+        
+        // Close menu when clicking a menu item
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.action-menu a, .action-menu button')) {
+                const menu = event.target.closest('.action-menu');
+                if (menu) {
+                    menu.classList.add('hidden');
+                }
+            }
+        });
     </script>
     <style>
         .autocomplete-suggestions {
@@ -1607,6 +1792,75 @@
         }
         .suggestion-item.highlighted {
             background-color: #dbeafe;
+        }
+        
+        /* Action menu dropdown styles */
+        .action-menu {
+            min-width: 12rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .action-menu button,
+        .action-menu a {
+            white-space: nowrap;
+        }
+        
+        .action-menu button:hover,
+        .action-menu a:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .action-menu > div > button:first-child,
+        .action-menu > div > a:first-child {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+        
+        .action-menu > div > button:last-child,
+        .action-menu > div > a:last-child {
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+        
+        /* Prevent table overflow from clipping dropdowns */
+        .overflow-x-auto {
+            overflow: visible;
+        }
+        
+        table {
+            position: relative;
+        }
+        
+        /* On mobile, restore horizontal scroll */
+        @media (max-width: 768px) {
+            .overflow-x-auto {
+                overflow-x: auto;
+            }
+        }
+        
+        /* Toast animations */
+        #toastContainer {
+            position: fixed !important;
+            top: 1rem !important;
+            right: 1rem !important;
+            z-index: 9999 !important;
+        }
+        
+        #toastContainer .alert {
+            animation: slideInRight 0.3s ease-out;
+            min-width: 300px;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </body>

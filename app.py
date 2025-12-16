@@ -380,6 +380,35 @@ def update_quotation(quotation_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/quotation/<int:quotation_id>/void', methods=['POST'])
+@login_required
+def void_invoice(quotation_id):
+    """Void an invoice"""
+    try:
+        quotation = Quotation.query.get_or_404(quotation_id)
+        
+        # Verify ownership
+        if quotation.user_id != current_user.id:
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        # Only invoices can be voided
+        if quotation.document_type != 'invoice':
+            return jsonify({'error': 'Only invoices can be voided'}), 400
+        
+        # Check if already voided
+        if quotation.voided:
+            return jsonify({'error': 'Invoice is already voided'}), 400
+        
+        # Mark as voided
+        quotation.voided = True
+        db.session.commit()
+        
+        return jsonify({'message': 'Invoice voided successfully', 'id': quotation.id}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/quotation/<int:quotation_id>/pdf', methods=['GET'])
 @login_required
 def generate_pdf(quotation_id):
@@ -640,6 +669,10 @@ def share_whatsapp(quotation_id):
     """Generate WhatsApp share link for a quotation/invoice with encrypted URL"""
     try:
         quotation = Quotation.query.filter_by(id=quotation_id, user_id=current_user.id).first_or_404()
+        
+        # Block voided invoices from being shared
+        if quotation.document_type == 'invoice' and quotation.voided:
+            return jsonify({'error': 'Cannot share voided invoices'}), 400
         
         # Ensure token exists
         if not quotation.share_token:
@@ -977,6 +1010,9 @@ def bulk_export_count():
         total_count = 0
         for doc in documents:
             doc_type = doc.document_type.lower()
+            # Skip voided invoices
+            if doc_type == 'invoice' and doc.voided:
+                continue
             # Check document type
             if doc_type == 'quotation' and include_quotations:
                 total_count += 1
@@ -1034,6 +1070,10 @@ def bulk_export():
             
             for doc in documents:
                 doc_type = doc.document_type.lower()
+                
+                # Skip voided invoices
+                if doc_type == 'invoice' and doc.voided:
+                    continue
                 
                 if doc_type == 'quotation' and not include_quotations:
                     continue

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: invoice-maker-app
+    ports:
+      - "5000:5000"
+    environment:
+      # Database connection string - Replace with your Supabase connection string
+      - SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
+      # Secret key for Flask sessions - Change this to a random string
+      - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      # Mount assets folder for persistent storage (optional)
+      - ./assets:/app/assets
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Networks
+networks:
+  default:
+    name: invoice-maker-network
