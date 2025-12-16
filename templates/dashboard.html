@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Remnow Invoice</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content {
+            display: block;
+        }
+        .tab-content.hidden {
+            display: none !important;
+        }
+        .tab.tab-active {
+            color: #2563eb !important;
+            border-bottom-color: #2563eb !important;
+            font-weight: 600;
+        }
+        .tab.tab-active svg {
+            color: #2563eb !important;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+    <!-- Navigation Bar -->
+    <div class="navbar bg-base-100 shadow-lg">
+        <div class="flex-1">
+            <a href="/" class="btn btn-ghost normal-case text-xl">
+                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-8 mr-2">
+            </a>
+        </div>
+        <div class="flex-none gap-2">
+            <!-- Navigation Tabs -->
+            <div class="tabs">
+                <a class="tab tab-lifted tab-active" id="quotationsTab" onclick="showTab('quotations')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Quotations
+                </a> 
+                <a class="tab tab-lifted" id="invoicesTab" onclick="showTab('invoices')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+                    </svg>
+                    Invoices
+                </a>
+                <a href="/settings" class="tab tab-lifted">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                </a>
+            </div>
+            <button onclick="document.getElementById('createModal').showModal()" class="btn btn-primary btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Create New
+            </button>
+            <button onclick="document.getElementById('bulkExportModal').showModal()" class="btn btn-primary btn-sm ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Bulk Export
+            </button>
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder">
+                    <div class="bg-neutral-focus text-neutral-content rounded-full w-10">
+                        <span class="text-xl">{{ current_user.name[0].upper() }}</span>
+                    </div>
+                </label>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li class="menu-title">
+                        <span>{{ current_user.name }}</span>
+                        <span class="text-xs">{{ current_user.email }}</span>
+                    </li>
+                    <li><a href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+
+        <!-- Quotations Tab Content -->
+        <div id="quotationsContent" class="tab-content">
+            <div class="border-b border-gray-200 pb-4 mb-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-semibold text-gray-800">Quotations</h2>
+                    <div class="text-sm font-medium text-gray-600">{{ quotations|length }} Total</div>
+                </div>
+            </div>
+            
+            <!-- Search and Filter Section -->
+            <div class="mb-6 flex flex-wrap gap-4 items-center">
+                <div class="flex-1 min-w-[300px]">
+                    <input type="text" id="searchQuotations" placeholder="Search by quotation no, client name..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" onkeyup="filterTable('quotations')">
+                </div>
+                <div class="flex gap-2">
+                    <select id="monthFilterQuotations" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterTable('quotations')">
+                        <option value="">All Months</option>
+                        <option value="2025-12">December 2025</option>
+                        <option value="2025-11">November 2025</option>
+                        <option value="2025-10">October 2025</option>
+                        <option value="2025-09">September 2025</option>
+                        <option value="2025-08">August 2025</option>
+                    </select>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2" onclick="resetFilters('quotations')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
+            
+            {% if quotations %}
+            <div class="overflow-x-auto">
+                <table class="w-full" id="quotationsTable">
+                    <thead>
+                        <tr class="border-b border-gray-300">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Quotation No</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Date</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Bill To</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Total</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        {% for quotation in quotations %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50" data-date="{{ quotation.date.strftime('%Y-%m') }}" data-search="{{ quotation.quotation_no|lower }} {{ quotation.to_address.split('\n')[0]|lower if quotation.to_address else '' }}">
+                            <td class="py-3 px-4 font-medium text-gray-900">{{ quotation.quotation_no }}</td>
+                            <td class="py-3 px-4 text-gray-600">{{ quotation.date.strftime('%d-%b-%Y') }}</td>
+                            <td class="py-3 px-4 text-gray-600">{{ quotation.to_address.split('\n')[0] if quotation.to_address else 'N/A' }}</td>
+                            <td class="py-3 px-4 font-semibold text-gray-900">{{ quotation.currency }} {{ quotation.total_amount }}</td>
+                            <td class="py-3 px-4">
+                                <div class="flex gap-1">
+                                    <button onclick="openEditModal({{ quotation.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    <a href="/api/quotation/{{ quotation.id }}/pdf" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors" target="_blank">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                    </a>
+                                    <button onclick="shareOnWhatsApp({{ quotation.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-6 flex justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    Showing <span id="quotationsShowingStart">1</span>-<span id="quotationsShowingEnd">{{ quotations|length }}</span> of <span id="quotationsTotal">{{ quotations|length }}</span>
+                </div>
+                <div class="flex gap-2" id="quotationsPagination">
+                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Previous</button>
+                    <button class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next</button>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-16">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-700 mb-2">No Quotations Yet</h3>
+                <p class="text-gray-500 mb-4">Create your first quotation to get started</p>
+                <button onclick="document.getElementById('createModal').showModal()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors">Create Quotation</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Invoices Tab Content -->
+        <div id="invoicesContent" class="tab-content hidden">
+            <div class="border-b border-gray-200 pb-4 mb-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-semibold text-gray-800">Invoices</h2>
+                    <div class="text-sm font-medium text-gray-600">{{ invoices|length }} Total</div>
+                </div>
+            </div>
+            
+            <!-- Search and Filter Section -->
+            <div class="mb-6 flex flex-wrap gap-4 items-center">
+                <div class="flex-1 min-w-[300px]">
+                    <input type="text" id="searchInvoices" placeholder="Search by invoice no, client name..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" onkeyup="filterTable('invoices')">
+                </div>
+                <div class="flex gap-2">
+                    <select id="monthFilterInvoices" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" onchange="filterTable('invoices')">
+                        <option value="">All Months</option>
+                        <option value="2025-12">December 2025</option>
+                        <option value="2025-11">November 2025</option>
+                        <option value="2025-10">October 2025</option>
+                        <option value="2025-09">September 2025</option>
+                        <option value="2025-08">August 2025</option>
+                    </select>
+                    <select id="paymentStatusFilterInvoices" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" onchange="filterTable('invoices')">
+                        <option value="">All Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="unpaid">Unpaid</option>
+                    </select>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2" onclick="resetFilters('invoices')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
+            
+            {% if invoices %}
+            <div class="overflow-x-auto">
+                <table class="w-full" id="invoicesTable">
+                    <thead>
+                        <tr class="border-b border-gray-300">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Invoice No</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Date</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Bill To</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Total</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Status</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        {% for invoice in invoices %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50" data-date="{{ invoice.date.strftime('%Y-%m') }}" data-search="{{ invoice.quotation_no|lower }} {{ invoice.to_address.split('\n')[0]|lower if invoice.to_address else '' }}" data-payment-status="{{ invoice.payment_status or 'unpaid' }}">
+                            <td class="py-3 px-4 font-medium text-gray-900">{{ invoice.quotation_no }}</td>
+                            <td class="py-3 px-4 text-gray-600">{{ invoice.date.strftime('%d-%b-%Y') }}</td>
+                            <td class="py-3 px-4 text-gray-600">{{ invoice.to_address.split('\n')[0] if invoice.to_address else 'N/A' }}</td>
+                            <td class="py-3 px-4 font-semibold text-gray-900">{{ invoice.currency }} {{ invoice.total_amount }}</td>
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 text-xs font-semibold rounded {% if invoice.payment_status == 'paid' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                    {{ invoice.payment_status|upper }}
+                                </span>
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="flex gap-1">
+                                    <button onclick="openEditModal({{ invoice.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    <a href="/api/quotation/{{ invoice.id }}/pdf" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors" target="_blank">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                    </a>
+                                    <button onclick="shareOnWhatsApp({{ invoice.id }})" class="inline-flex items-center px-3 py-1.5 text-gray-700 hover:text-gray-900 text-sm font-medium rounded transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-6 flex justify-between items-center">
+                <div class="text-sm text-gray-600">
+                    Showing <span id="invoicesShowingStart">1</span>-<span id="invoicesShowingEnd">{{ invoices|length }}</span> of <span id="invoicesTotal">{{ invoices|length }}</span>
+                </div>
+                <div class="flex gap-2" id="invoicesPagination">
+                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Previous</button>
+                    <button class="px-3 py-1 bg-green-600 text-white rounded">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next</button>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-16">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-700 mb-2">No Invoices Yet</h3>
+                <p class="text-gray-500 mb-4">Create your first invoice to get started</p>
+                <button onclick="document.getElementById('createModal').showModal()" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors">Create Invoice</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        let currentPageQuotations = 1;
+        let currentPageInvoices = 1;
+        const itemsPerPage = 15;
+
+        // Initialize page - check if there's a tab parameter in URL
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab === 'invoices') {
+                showTab('invoices');
+            } else {
+                showTab('quotations');
+            }
+        });
+
+        function showTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active from all tabs
+            document.querySelectorAll('#quotationsTab, #invoicesTab').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.style.color = '';
+                tab.style.borderBottomColor = '';
+            });
+            
+            // Show selected content
+            if (tabName === 'quotations') {
+                document.getElementById('quotationsContent').classList.remove('hidden');
+                const tab = document.getElementById('quotationsTab');
+                tab.classList.add('tab-active');
+                tab.style.color = '#2563eb';
+                tab.style.borderBottomColor = '#2563eb';
+                // Update URL without page reload
+                window.history.replaceState({}, '', '/?tab=quotations');
+            } else if (tabName === 'invoices') {
+                document.getElementById('invoicesContent').classList.remove('hidden');
+                const tab = document.getElementById('invoicesTab');
+                tab.classList.add('tab-active');
+                tab.style.color = '#2563eb';
+                tab.style.borderBottomColor = '#2563eb';
+                // Update URL without page reload
+                window.history.replaceState({}, '', '/?tab=invoices');
+            }
+        }
+        
+        function filterTable(type) {
+            const searchInput = document.getElementById(`search${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const monthFilter = document.getElementById(`monthFilter${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const table = document.getElementById(`${type}Table`);
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedMonth = monthFilter.value;
+            
+            // Get payment status filter for invoices
+            let selectedPaymentStatus = '';
+            if (type === 'invoices') {
+                const paymentStatusFilter = document.getElementById('paymentStatusFilterInvoices');
+                selectedPaymentStatus = paymentStatusFilter ? paymentStatusFilter.value : '';
+            }
+            
+            // First, filter all rows
+            let visibleRows = [];
+            for (let row of rows) {
+                const searchData = row.getAttribute('data-search');
+                const dateData = row.getAttribute('data-date');
+                
+                const matchesSearch = !searchTerm || searchData.includes(searchTerm);
+                const matchesMonth = !selectedMonth || dateData === selectedMonth;
+                
+                // Check payment status for invoices
+                let matchesPaymentStatus = true;
+                if (type === 'invoices' && selectedPaymentStatus) {
+                    const paymentStatus = row.getAttribute('data-payment-status');
+                    matchesPaymentStatus = paymentStatus === selectedPaymentStatus;
+                }
+                
+                if (matchesSearch && matchesMonth && matchesPaymentStatus) {
+                    visibleRows.push(row);
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+            
+            // Reset to first page when filtering
+            if (type === 'quotations') {
+                currentPageQuotations = 1;
+            } else {
+                currentPageInvoices = 1;
+            }
+            
+            // Apply pagination
+            paginateTable(type, visibleRows);
+        }
+        
+        function paginateTable(type, visibleRows) {
+            const currentPage = type === 'quotations' ? currentPageQuotations : currentPageInvoices;
+            const totalItems = visibleRows.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+            
+            // Show only current page items
+            visibleRows.forEach((row, index) => {
+                if (index >= startIndex && index < endIndex) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update pagination info
+            document.getElementById(`${type}ShowingStart`).textContent = totalItems > 0 ? startIndex + 1 : 0;
+            document.getElementById(`${type}ShowingEnd`).textContent = endIndex;
+            document.getElementById(`${type}Total`).textContent = totalItems;
+            
+            // Update pagination buttons
+            renderPaginationButtons(type, totalPages, currentPage);
+        }
+        
+        function renderPaginationButtons(type, totalPages, currentPage) {
+            const paginationDiv = document.getElementById(`${type}Pagination`);
+            const color = type === 'quotations' ? 'blue' : 'green';
+            
+            let html = '';
+            
+            // Previous button
+            html += `<button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 ${currentPage === 1 ? 'disabled:opacity-50 disabled:cursor-not-allowed' : ''}" 
+                     ${currentPage === 1 ? 'disabled' : ''} onclick="changePage('${type}', ${currentPage - 1})">Previous</button>`;
+            
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            // First page
+            if (startPage > 1) {
+                html += `<button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50" onclick="changePage('${type}', 1)">1</button>`;
+                if (startPage > 2) {
+                    html += `<span class="px-2">...</span>`;
+                }
+            }
+            
+            // Page number buttons
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    html += `<button class="px-3 py-1 bg-${color}-600 text-white rounded">${i}</button>`;
+                } else {
+                    html += `<button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50" onclick="changePage('${type}', ${i})">${i}</button>`;
+                }
+            }
+            
+            // Last page
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `<span class="px-2">...</span>`;
+                }
+                html += `<button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50" onclick="changePage('${type}', ${totalPages})">${totalPages}</button>`;
+            }
+            
+            // Next button
+            html += `<button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 ${currentPage === totalPages ? 'disabled:opacity-50 disabled:cursor-not-allowed' : ''}" 
+                     ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage('${type}', ${currentPage + 1})">Next</button>`;
+            
+            paginationDiv.innerHTML = html;
+        }
+        
+        function changePage(type, pageNumber) {
+            if (type === 'quotations') {
+                currentPageQuotations = pageNumber;
+            } else {
+                currentPageInvoices = pageNumber;
+            }
+            
+            // Re-apply filters with new page
+            const table = document.getElementById(`${type}Table`);
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            
+            const searchInput = document.getElementById(`search${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const monthFilter = document.getElementById(`monthFilter${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedMonth = monthFilter.value;
+            
+            // Get payment status filter for invoices
+            let selectedPaymentStatus = '';
+            if (type === 'invoices') {
+                const paymentStatusFilter = document.getElementById('paymentStatusFilterInvoices');
+                selectedPaymentStatus = paymentStatusFilter ? paymentStatusFilter.value : '';
+            }
+            
+            let visibleRows = [];
+            for (let row of rows) {
+                const searchData = row.getAttribute('data-search');
+                const dateData = row.getAttribute('data-date');
+                
+                const matchesSearch = !searchTerm || searchData.includes(searchTerm);
+                const matchesMonth = !selectedMonth || dateData === selectedMonth;
+                
+                // Check payment status for invoices
+                let matchesPaymentStatus = true;
+                if (type === 'invoices' && selectedPaymentStatus) {
+                    const paymentStatus = row.getAttribute('data-payment-status');
+                    matchesPaymentStatus = paymentStatus === selectedPaymentStatus;
+                }
+                
+                if (matchesSearch && matchesMonth && matchesPaymentStatus) {
+                    visibleRows.push(row);
+                }
+            }
+            
+            paginateTable(type, visibleRows);
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function resetFilters(type) {
+            document.getElementById(`search${type.charAt(0).toUpperCase() + type.slice(1)}`).value = '';
+            document.getElementById(`monthFilter${type.charAt(0).toUpperCase() + type.slice(1)}`).value = '';
+            
+            // Reset payment status filter for invoices
+            if (type === 'invoices') {
+                const paymentStatusFilter = document.getElementById('paymentStatusFilterInvoices');
+                if (paymentStatusFilter) {
+                    paymentStatusFilter.value = '';
+                }
+            }
+            
+            if (type === 'quotations') {
+                currentPageQuotations = 1;
+            } else {
+                currentPageInvoices = 1;
+            }
+            
+            filterTable(type);
+        }
+        
+        // Initialize pagination on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Initialize quotations pagination
+            const quotationsTable = document.getElementById('quotationsTable');
+            if (quotationsTable) {
+                const quotationsRows = Array.from(quotationsTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr'));
+                paginateTable('quotations', quotationsRows);
+            }
+            
+            // Initialize invoices pagination
+            const invoicesTable = document.getElementById('invoicesTable');
+            if (invoicesTable) {
+                const invoicesRows = Array.from(invoicesTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr'));
+                paginateTable('invoices', invoicesRows);
+            }
+        });
+        
+        function viewDetails(id) {
+            // Fetch and show quotation/invoice details
+            fetch(`/api/quotation/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Details:\n\nQuotation No: ${data.quotation_no}\nDate: ${data.date}\nTotal: ${data.total_amount}\nCurrency: ${data.currency}`);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to load details');
+                });
+        }
+    </script>
+
+    <!-- Create Document Modal -->
+    <dialog id="createModal" class="modal">
+        <div class="modal-box max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-2xl" id="modalTitle">Create Document</h3>
+                
+                <div class="flex items-center gap-4">
+                    <label class="label cursor-pointer gap-2">
+                        <input type="radio" name="documentType" value="invoice" class="radio radio-primary" checked onchange="setDocumentType('invoice')" />
+                        <span class="label-text font-medium">Invoice</span>
+                    </label>
+                    <label class="label cursor-pointer gap-2">
+                        <input type="radio" name="documentType" value="quotation" class="radio radio-primary" onchange="setDocumentType('quotation')" />
+                        <span class="label-text font-medium">Quotation</span>
+                    </label>
+                </div>
+            </div>
+            
+            <form id="quotationForm" class="space-y-6">
+                <!-- Basic Info -->
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm" id="invoiceNoLabel">Invoice Number</span></label>
+                        <input type="text" id="quotation_no" class="input input-bordered input-sm" placeholder="INV/25-26/001" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Date</span></label>
+                        <input type="date" id="date" class="input input-bordered input-sm" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Currency</span></label>
+                        <select id="currency" class="select select-bordered select-sm" onchange="handleCurrencyChange()">
+                            <option value="USD">USD ($)</option>
+                            <option value="INR" selected>INR (₹)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                        </select>
+                    </div>
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Payment Status</span></label>
+                        <select id="payment_status" class="select select-bordered select-sm">
+                            <option value="unpaid" selected>Unpaid</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- GST Type Section (only for INR) -->
+                <div id="gstTypeSection" class="grid grid-cols-4 gap-3" style="display: none;">
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">GST Type</span></label>
+                        <div class="flex gap-4">
+                            <label class="label cursor-pointer gap-2">
+                                <input type="radio" name="gst_type" value="interstate" class="radio radio-primary radio-sm" onchange="handleGstTypeChange()" />
+                                <span class="label-text text-xs">Interstate</span>
+                            </label>
+                            <label class="label cursor-pointer gap-2">
+                                <input type="radio" name="gst_type" value="intrastate" class="radio radio-primary radio-sm" checked onchange="handleGstTypeChange()" />
+                                <span class="label-text text-xs">Intrastate</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Name)</span></label>
+                        <input type="text" id="client_name" class="input input-bordered input-sm" placeholder="Client Name" required>
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Address)</span></label>
+                    <textarea id="client_address" class="textarea textarea-bordered textarea-sm" rows="2" placeholder="Address line 1&#10;Address line 2" required></textarea>
+                </div>
+                
+                <!-- Items Section -->
+                <div class="mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="label-text font-semibold text-sm">Items</label>
+                        <button type="button" onclick="addItem()" class="btn btn-xs" style="background-color: #10b981; color: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Item
+                        </button>
+                    </div>
+                    <div class="border border-gray-300" style="border-radius: 0;">
+                        <table class="w-full text-xs" style="border-radius: 0; border-collapse: collapse;">
+                            <thead>
+                                <tr class="bg-gray-100 border-b border-gray-300">
+                                    <th class="px-2 py-2 text-left font-semibold w-8">#</th>
+                                    <th class="px-2 py-2 text-left font-semibold">Description</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-20">HSN</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-24">Month</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-24">Rate</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-24">Amount</th>
+                                    <th class="px-2 py-2 w-8"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsTableBody">
+                                <!-- Items will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- GST Fields Section -->
+                <div id="gstFieldsSection" class="mt-4" style="display: none;">
+                    <div class="flex justify-end">
+                        <div class="w-64 space-y-2">
+                            <!-- Intrastate: CGST and SGST -->
+                            <div id="intrastateGstFields" style="display: none;">
+                                <div class="flex gap-2 items-end">
+                                    <div class="form-control flex-1">
+                                        <label class="label py-0"><span class="label-text text-xs">CGST (%)</span></label>
+                                        <input type="number" id="cgst_rate" class="input input-bordered input-xs" value="9" step="0.01" min="0" max="100" onchange="calculateGst()">
+                                    </div>
+                                    <div class="form-control flex-1">
+                                        <label class="label py-0"><span class="label-text text-xs">SGST (%)</span></label>
+                                        <input type="number" id="sgst_rate" class="input input-bordered input-xs" value="9" step="0.01" min="0" max="100" onchange="calculateGst()">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Interstate: IGST -->
+                            <div id="interstateGstFields" style="display: none;">
+                                <div class="form-control">
+                                    <label class="label py-0"><span class="label-text text-xs">IGST (%)</span></label>
+                                    <input type="number" id="igst_rate" class="input input-bordered input-xs" value="18" step="0.01" min="0" max="100" onchange="calculateGst()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Info -->
+                <div id="paymentSection">
+                    <div class="divider my-4">Payment Information</div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Bank Name</span></label>
+                            <input type="text" id="bank_name" class="input input-bordered input-xs" placeholder="Canara Bank">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Branch</span></label>
+                            <input type="text" id="branch_name" class="input input-bordered input-xs" placeholder="Branch Name">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Account Name</span></label>
+                            <input type="text" id="account_name" class="input input-bordered input-xs" placeholder="Account Holder">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Account No</span></label>
+                            <input type="text" id="account_number" class="input input-bordered input-xs" placeholder="1234567890">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">IFSC Code</span></label>
+                            <input type="text" id="ifsc_code" class="input input-bordered input-xs" placeholder="IFSC Code">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Gpay / PhonePe</span></label>
+                            <input type="text" id="gpay_phonepe" class="input input-bordered input-xs" placeholder="+91 9994164140">
+                        </div>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="modal-action">
+                <button onclick="saveQuotation()" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                    <span id="saveButtonText">Save & Generate PDF</span>
+                </button>
+                <form method="dialog">
+                    <button class="btn">Cancel</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <!-- Bulk Export Modal -->
+    <dialog id="bulkExportModal" class="modal">
+        <div class="modal-box max-w-md">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">Bulk Export PDFs</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="label">
+                        <span class="label-text">From Date</span>
+                    </label>
+                    <input type="date" id="exportFromDate" class="input input-bordered w-full" required>
+                </div>
+                
+                <div>
+                    <label class="label">
+                        <span class="label-text">To Date</span>
+                    </label>
+                    <input type="date" id="exportToDate" class="input input-bordered w-full" required>
+                </div>
+                
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">Include Quotations</span>
+                        <input type="checkbox" id="includeQuotations" class="checkbox checkbox-primary" checked>
+                    </label>
+                </div>
+                
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">Include Invoices</span>
+                        <input type="checkbox" id="includeInvoices" class="checkbox checkbox-primary" checked>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Progress Section (hidden by default) -->
+            <div id="exportProgress" class="hidden space-y-4">
+                <div class="text-sm font-medium text-gray-700" id="progressText">Preparing export...</div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div class="text-xs text-gray-500" id="progressDetails">Getting ready...</div>
+            </div>
+            
+            <div class="modal-action">
+                <button type="button" class="btn btn-ghost" onclick="cancelBulkExport()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="startBulkExport()" id="exportBtn">
+                    <span id="exportBtnText">Export</span>
+                    <span id="exportSpinner" class="loading loading-spinner loading-sm hidden"></span>
+                </button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <script>
+        let items = [];
+        let itemCounter = 0;
+        let documentType = 'invoice';
+        let savedItems = []; // For auto-suggest
+        let editMode = false;
+        let editingQuotationId = null;
+        
+        // User's document number prefixes
+        const quotationPrefix = "{{ current_user.quotation_prefix or 'QUO/25-26/' }}";
+        const invoicePrefix = "{{ current_user.invoice_prefix or 'INV/25-26/' }}";
+
+        // Load saved items for auto-suggest
+        async function loadSavedItems() {
+            try {
+                const response = await fetch('/api/items');
+                if (response.ok) {
+                    savedItems = await response.json();
+                }
+            } catch (error) {
+                console.error('Error loading items:', error);
+            }
+        }
+
+        // Initialize modal when opened
+        function initModal() {
+            editMode = false;
+            editingQuotationId = null;
+            document.getElementById('modalTitle').textContent = 'Create Document';
+            document.getElementById('saveButtonText').textContent = 'Save & Generate PDF';
+            document.getElementById('date').valueAsDate = new Date();
+            items = [];
+            itemCounter = 0;
+            document.getElementById('quotationForm').reset();
+            document.getElementById('date').valueAsDate = new Date();
+            documentType = 'invoice';
+            setDocumentType('invoice');
+            // Reset GST fields
+            document.getElementById('cgst_rate').value = '9';
+            document.getElementById('sgst_rate').value = '9';
+            document.getElementById('igst_rate').value = '18';
+            document.querySelector('input[name="gst_type"][value="intrastate"]').checked = true;
+            handleCurrencyChange();
+            addItem();
+            loadSavedItems(); // Refresh items for auto-suggest
+        }
+        
+        // Open modal in edit mode
+        async function openEditModal(quotationId) {
+            try {
+                // Fetch quotation data
+                const response = await fetch(`/api/quotation/${quotationId}`);
+                if (!response.ok) throw new Error('Failed to load document');
+                
+                const data = await response.json();
+                
+                // Set edit mode
+                editMode = true;
+                editingQuotationId = quotationId;
+                document.getElementById('modalTitle').textContent = 'Edit Document';
+                document.getElementById('saveButtonText').textContent = 'Update & Generate PDF';
+                
+                // Set document type
+                documentType = data.document_type;
+                setDocumentType(documentType);
+                
+                // Parse address - first line is client name, rest is address
+                const addressLines = data.to_address.split('\n');
+                const clientName = addressLines[0] || '';
+                const clientAddress = addressLines.slice(1).join('\n');
+                
+                // Fill form fields
+                document.getElementById('quotation_no').value = data.quotation_no;
+                document.getElementById('date').value = data.date;
+                document.getElementById('client_name').value = clientName;
+                document.getElementById('client_address').value = clientAddress;
+                document.getElementById('currency').value = data.currency;
+                document.getElementById('payment_status').value = data.payment_status || 'unpaid';
+                document.getElementById('bank_name').value = data.bank_name || '';
+                document.getElementById('branch_name').value = data.branch_name || '';
+                document.getElementById('account_name').value = data.account_name || '';
+                document.getElementById('account_number').value = data.account_number || '';
+                document.getElementById('ifsc_code').value = data.ifsc_code || '';
+                document.getElementById('gpay_phonepe').value = data.gpay_phonepe || '';
+                
+                // Load GST fields
+                if (data.currency === 'INR') {
+                    handleCurrencyChange();
+                    const gstType = data.gst_type || 'intrastate';
+                    document.querySelector(`input[name="gst_type"][value="${gstType}"]`).checked = true;
+                    handleGstTypeChange();
+                    if (gstType === 'intrastate') {
+                        document.getElementById('cgst_rate').value = data.cgst_rate || '9';
+                        document.getElementById('sgst_rate').value = data.sgst_rate || '9';
+                    } else {
+                        document.getElementById('igst_rate').value = data.igst_rate || '18';
+                    }
+                }
+                
+                // Update document type radio buttons
+                const radios = document.querySelectorAll('input[name="documentType"]');
+                radios.forEach(radio => {
+                    radio.checked = radio.value === data.document_type;
+                });
+                
+                // Load items
+                items = [];
+                itemCounter = 0;
+                data.items.forEach(item => {
+                    items.push({
+                        id: itemCounter++,
+                        description: item.description || '',
+                        hsn_code: item.hsn_code || '',
+                        month: item.month || '',
+                        rate: item.rate || '',
+                        amount: item.amount || ''
+                    });
+                });
+                renderItems();
+                
+                // Open modal
+                document.getElementById('createModal').showModal();
+                
+            } catch (error) {
+                alert('Failed to load document: ' + error.message);
+            }
+        }
+        
+        // Handle modal open - only init for create mode, not edit mode
+        const modal = document.getElementById('createModal');
+        const observer = new MutationObserver(function(mutations) {
+            if (modal.hasAttribute('open') && !editMode) {
+                initModal();
+            }
+        });
+        observer.observe(modal, { attributes: true, attributeFilter: ['open'] });
+        
+        // Also handle button clicks for create
+        document.querySelectorAll('[onclick*="createModal"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                setTimeout(() => {
+                    if (!editMode) {
+                        initModal();
+                    }
+                }, 50);
+            });
+        });
+
+        function setDocumentType(type) {
+            documentType = type;
+            
+            if (type === 'quotation') {
+                document.getElementById('paymentSection').style.display = 'none';
+                document.getElementById('invoiceNoLabel').textContent = 'Quotation Number';
+                document.getElementById('quotation_no').placeholder = quotationPrefix + '001';
+                // Auto-fill with prefix in create mode
+                if (!editMode) {
+                    document.getElementById('quotation_no').value = quotationPrefix;
+                }
+            } else {
+                document.getElementById('paymentSection').style.display = 'block';
+                document.getElementById('invoiceNoLabel').textContent = 'Invoice Number';
+                document.getElementById('quotation_no').placeholder = invoicePrefix + '001';
+                // Auto-fill with prefix in create mode
+                if (!editMode) {
+                    document.getElementById('quotation_no').value = invoicePrefix;
+                }
+            }
+            // Check currency and update GST fields visibility
+            handleCurrencyChange();
+        }
+        
+        function handleCurrencyChange() {
+            const currency = document.getElementById('currency').value;
+            const gstTypeSection = document.getElementById('gstTypeSection');
+            const gstFieldsSection = document.getElementById('gstFieldsSection');
+            
+            if (currency === 'INR') {
+                gstTypeSection.style.display = 'block';
+                gstFieldsSection.style.display = 'block';
+                handleGstTypeChange();
+            } else {
+                gstTypeSection.style.display = 'none';
+                gstFieldsSection.style.display = 'none';
+            }
+        }
+        
+        function handleGstTypeChange() {
+            const gstType = document.querySelector('input[name="gst_type"]:checked')?.value || 'intrastate';
+            const intrastateFields = document.getElementById('intrastateGstFields');
+            const interstateFields = document.getElementById('interstateGstFields');
+            
+            if (gstType === 'intrastate') {
+                intrastateFields.style.display = 'block';
+                interstateFields.style.display = 'none';
+            } else {
+                intrastateFields.style.display = 'none';
+                interstateFields.style.display = 'block';
+            }
+        }
+        
+        function calculateGst() {
+            // This function can be used to calculate GST amounts if needed
+            // For now, we'll just store the rates
+        }
+
+        function addItem() {
+            const item = {
+                id: itemCounter++,
+                description: '',
+                hsn_code: '',
+                month: '',
+                rate: '',
+                amount: ''
+            };
+            items.push(item);
+            renderItems();
+        }
+
+        function removeItem(id) {
+            items = items.filter(item => item.id !== id);
+            renderItems();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsTableBody');
+            if (items.length === 0) {
+                container.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">No items added yet. Click "Add Item" to start.</td></tr>';
+                return;
+            }
+            container.innerHTML = items.map((item, index) => {
+                return `
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="px-2 py-2 text-center">${index + 1}</td>
+                        <td class="px-2 py-2 relative">
+                            <input type="text" placeholder="Service description" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500 autocomplete-input" 
+                               value="${(item.description || '').replace(/"/g, '&quot;')}" oninput="updateItem(${item.id}, 'description', this.value)" onfocus="showSuggestions(${item.id}, this.value)" onkeydown="handleKeydown(event, ${item.id})">
+                            <div id="suggestions-${item.id}" class="autocomplete-suggestions hidden absolute z-50 bg-white border border-gray-300 rounded shadow-lg max-h-48 overflow-y-auto w-full"></div>
+                        </td>
+                        <td class="px-2 py-2">
+                            <input type="text" placeholder="HSN" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                               value="${(item.hsn_code || '').replace(/"/g, '&quot;')}" oninput="updateItem(${item.id}, 'hsn_code', this.value)">
+                        </td>
+                        <td class="px-2 py-2">
+                            <input type="text" placeholder="Sep 2025" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                               value="${(item.month || '').replace(/"/g, '&quot;')}" oninput="updateItem(${item.id}, 'month', this.value)">
+                        </td>
+                        <td class="px-2 py-2">
+                            <input type="number" placeholder="0" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                               value="${item.rate || ''}" oninput="updateItem(${item.id}, 'rate', this.value)">
+                        </td>
+                        <td class="px-2 py-2">
+                            <input type="number" placeholder="0.00" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                               value="${item.amount || ''}" oninput="updateItem(${item.id}, 'amount', this.value)">
+                        </td>
+                        <td class="px-2 py-2 text-center">
+                            <button type="button" onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700 font-bold">×</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateItem(id, field, value) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item[field] = value;
+                if (field === 'description') {
+                    showSuggestions(id, value);
+                }
+            }
+        }
+
+        function showSuggestions(itemId, searchTerm) {
+            const suggestionsDiv = document.getElementById(`suggestions-${itemId}`);
+            if (!suggestionsDiv) return;
+            
+            if (!searchTerm || searchTerm.length < 1) {
+                suggestionsDiv.classList.add('hidden');
+                return;
+            }
+
+            const filtered = savedItems.filter(item => 
+                item.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                suggestionsDiv.classList.add('hidden');
+                return;
+            }
+
+            suggestionsDiv.innerHTML = filtered.slice(0, 5).map(item => `
+                <div class="px-3 py-2 hover:bg-blue-50 cursor-pointer suggestion-item" onclick="selectSuggestion(${itemId}, '${item.description.replace(/'/g, "\\'")}', '${(item.hsn_code || '').replace(/'/g, "\\'")}', '${(item.default_rate || '').replace(/'/g, "\\'")}')">
+                    <div class="font-medium text-sm">${item.description}</div>
+                    ${item.hsn_code ? `<div class="text-xs text-gray-500">HSN: ${item.hsn_code}</div>` : ''}
+                    ${item.default_rate ? `<div class="text-xs text-gray-500">Rate: ${item.default_rate}</div>` : ''}
+                </div>
+            `).join('');
+            suggestionsDiv.classList.remove('hidden');
+        }
+
+        function selectSuggestion(itemId, description, hsnCode, defaultRate) {
+            const item = items.find(i => i.id === itemId);
+            if (item) {
+                item.description = description;
+                item.hsn_code = hsnCode || '';
+                if (defaultRate) {
+                    item.rate = defaultRate;
+                }
+                renderItems();
+                // Hide suggestions
+                const suggestionsDiv = document.getElementById(`suggestions-${itemId}`);
+                if (suggestionsDiv) {
+                    suggestionsDiv.classList.add('hidden');
+                }
+            }
+        }
+
+        function handleKeydown(event, itemId) {
+            const suggestionsDiv = document.getElementById(`suggestions-${itemId}`);
+            if (!suggestionsDiv || suggestionsDiv.classList.contains('hidden')) return;
+            
+            const items = suggestionsDiv.querySelectorAll('.suggestion-item');
+            const current = suggestionsDiv.querySelector('.suggestion-item.highlighted');
+            
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                if (current) {
+                    current.classList.remove('highlighted');
+                    const next = current.nextElementSibling || items[0];
+                    next.classList.add('highlighted');
+                } else if (items.length > 0) {
+                    items[0].classList.add('highlighted');
+                }
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (current) {
+                    current.classList.remove('highlighted');
+                    const prev = current.previousElementSibling || items[items.length - 1];
+                    prev.classList.add('highlighted');
+                } else if (items.length > 0) {
+                    items[items.length - 1].classList.add('highlighted');
+                }
+            } else if (event.key === 'Enter' && current) {
+                event.preventDefault();
+                current.click();
+            } else if (event.key === 'Escape') {
+                suggestionsDiv.classList.add('hidden');
+            }
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.autocomplete-input') && !e.target.closest('.autocomplete-suggestions')) {
+                document.querySelectorAll('.autocomplete-suggestions').forEach(div => div.classList.add('hidden'));
+            }
+        });
+
+        async function saveQuotation() {
+            const currency = document.getElementById('currency').value;
+            const formData = {
+                quotation_no: document.getElementById('quotation_no').value,
+                date: document.getElementById('date').value,
+                to_address: document.getElementById('client_name').value + '\n' + document.getElementById('client_address').value,
+                currency: currency,
+                document_type: documentType,
+                payment_status: document.getElementById('payment_status').value,
+                bank_name: document.getElementById('bank_name').value,
+                branch_name: document.getElementById('branch_name').value,
+                account_name: document.getElementById('account_name').value,
+                account_number: document.getElementById('account_number').value,
+                ifsc_code: document.getElementById('ifsc_code').value,
+                gpay_phonepe: document.getElementById('gpay_phonepe').value,
+                items: items.map(item => ({
+                    description: item.description,
+                    hsn_code: item.hsn_code,
+                    month: item.month,
+                    rate: item.rate,
+                    amount: item.amount
+                }))
+            };
+            
+            // Add GST fields if currency is INR
+            if (currency === 'INR') {
+                const gstType = document.querySelector('input[name="gst_type"]:checked')?.value || 'intrastate';
+                formData.gst_type = gstType;
+                if (gstType === 'intrastate') {
+                    formData.cgst_rate = document.getElementById('cgst_rate').value || '9';
+                    formData.sgst_rate = document.getElementById('sgst_rate').value || '9';
+                } else {
+                    formData.igst_rate = document.getElementById('igst_rate').value || '18';
+                }
+            }
+
+            if (!formData.quotation_no || !formData.date || items.length === 0) {
+                alert('Please fill in all required fields and add at least one item');
+                return;
+            }
+
+            try {
+                const url = editMode ? `/api/quotation/${editingQuotationId}` : '/api/quotation';
+                const method = editMode ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(editMode ? 'Document updated successfully!' : 'Document saved successfully!');
+                    window.open(`/api/quotation/${data.id}/pdf`, '_blank');
+                    document.getElementById('createModal').close();
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error saving document: ' + error.message);
+            }
+        }
+
+        // Initialize
+        loadSavedItems();
+
+        // Bulk Export Functions
+        let exportAborted = false;
+        
+        async function startBulkExport() {
+            const fromDate = document.getElementById('exportFromDate').value;
+            const toDate = document.getElementById('exportToDate').value;
+            const includeQuotations = document.getElementById('includeQuotations').checked;
+            const includeInvoices = document.getElementById('includeInvoices').checked;
+            
+            if (!fromDate || !toDate) {
+                alert('Please select both from and to dates');
+                return;
+            }
+            
+            if (!includeQuotations && !includeInvoices) {
+                alert('Please select at least one document type to export');
+                return;
+            }
+            
+            if (new Date(fromDate) > new Date(toDate)) {
+                alert('From date cannot be later than to date');
+                return;
+            }
+            
+            exportAborted = false;
+            
+            // Show progress UI
+            showExportProgress();
+            
+            try {
+                // First, get the count of documents to export
+                updateProgress(10, 'Checking documents in date range...', 'Connecting to server...');
+                
+                const countResponse = await fetch('/bulk_export_count', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        from_date: fromDate,
+                        to_date: toDate,
+                        include_quotations: includeQuotations,
+                        include_invoices: includeInvoices
+                    })
+                });
+                
+                if (!countResponse.ok) {
+                    const errorData = await countResponse.json();
+                    throw new Error(errorData.error || 'Failed to check documents');
+                }
+                
+                const countData = await countResponse.json();
+                const totalDocs = countData.total_documents;
+                
+                if (totalDocs === 0) {
+                    alert('No documents found in the specified date range');
+                    hideExportProgress();
+                    return;
+                }
+                
+                updateProgress(20, `Found ${totalDocs} documents`, `Preparing to generate ${totalDocs} PDFs...`);
+                
+                // Start the actual export with progress tracking
+                await performBulkExportWithProgress(fromDate, toDate, includeQuotations, includeInvoices, totalDocs);
+                
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+                hideExportProgress();
+            }
+        }
+        
+        async function performBulkExportWithProgress(fromDate, toDate, includeQuotations, includeInvoices, totalDocs) {
+            // Simulate progress updates during PDF generation
+            const progressSteps = [
+                { progress: 30, text: 'Generating PDFs...', detail: 'Creating document templates...' },
+                { progress: 50, text: 'Processing documents...', detail: `Generating ${totalDocs} PDF files...` },
+                { progress: 70, text: 'Organizing files...', detail: 'Creating folder structure...' },
+                { progress: 85, text: 'Creating ZIP archive...', detail: 'Compressing files for download...' },
+                { progress: 95, text: 'Finalizing export...', detail: 'Preparing download...' }
+            ];
+            
+            // Update progress gradually
+            for (let i = 0; i < progressSteps.length; i++) {
+                if (exportAborted) return;
+                
+                const step = progressSteps[i];
+                updateProgress(step.progress, step.text, step.detail);
+                
+                // Add delay to show progress (except for the last step)
+                if (i < progressSteps.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+            
+            try {
+                const response = await fetch('/bulk_export', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        from_date: fromDate,
+                        to_date: toDate,
+                        include_quotations: includeQuotations,
+                        include_invoices: includeInvoices
+                    })
+                });
+                
+                if (response.ok) {
+                    updateProgress(100, 'Export complete!', 'Starting download...');
+                    
+                    // Get the filename from the response headers
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'bulk_export.zip';
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                        if (filenameMatch) {
+                            filename = filenameMatch[1];
+                        }
+                    }
+                    
+                    // Download the file
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    // Close modal and reset form after a short delay
+                    setTimeout(() => {
+                        document.getElementById('bulkExportModal').close();
+                        resetBulkExportForm();
+                    }, 1000);
+                    
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Unknown error');
+                }
+            } catch (error) {
+                throw error;
+            }
+        }
+        
+        function showExportProgress() {
+            document.getElementById('exportProgress').classList.remove('hidden');
+            document.getElementById('exportBtn').disabled = true;
+            document.getElementById('exportBtnText').textContent = 'Exporting...';
+            document.getElementById('exportSpinner').classList.remove('hidden');
+        }
+        
+        function hideExportProgress() {
+            document.getElementById('exportProgress').classList.add('hidden');
+            document.getElementById('exportBtn').disabled = false;
+            document.getElementById('exportBtnText').textContent = 'Export';
+            document.getElementById('exportSpinner').classList.add('hidden');
+        }
+        
+        function updateProgress(percentage, text, detail) {
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = text;
+            document.getElementById('progressDetails').textContent = detail;
+        }
+        
+        function cancelBulkExport() {
+            exportAborted = true;
+            document.getElementById('bulkExportModal').close();
+            resetBulkExportForm();
+        }
+        
+        function resetBulkExportForm() {
+            document.getElementById('exportFromDate').value = '';
+            document.getElementById('exportToDate').value = '';
+            document.getElementById('includeQuotations').checked = true;
+            document.getElementById('includeInvoices').checked = true;
+            hideExportProgress();
+            exportAborted = false;
+        }
+        
+        // WhatsApp sharing function with encrypted URL
+        async function shareOnWhatsApp(quotationId) {
+            try {
+                // Get encrypted share URL from backend
+                const response = await fetch(`/api/quotation/${quotationId}/whatsapp`);
+                if (!response.ok) {
+                    throw new Error('Failed to generate share link');
+                }
+                
+                const data = await response.json();
+                
+                // Open WhatsApp with the encrypted URL in the message
+                window.open(data.whatsapp_url, '_blank');
+            } catch (error) {
+                console.error('Error sharing on WhatsApp:', error);
+                alert('Failed to open WhatsApp. Please try again.');
+            }
+        }
+    </script>
+    <style>
+        .autocomplete-suggestions {
+            top: 100%;
+            left: 0;
+            margin-top: 2px;
+        }
+        .suggestion-item.highlighted {
+            background-color: #dbeafe;
+        }
+    </style>
+</body>
+</html>

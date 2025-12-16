@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remnow Quotation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        
+        .invoice-paper {
+            max-width: 210mm;
+            background: white;
+            margin: 20px auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .content-wrapper {
+            padding: 8% 8% 0 8%;
+            position: relative;
+        }
+        
+        /* Header */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+            gap: 24px;
+        }
+        
+        .header-left {
+            flex: 1;
+        }
+        
+        .logo-img {
+            height: 42px;
+            width: auto;
+            margin-bottom: 10px;
+        }
+        
+        .company-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+        
+        .company-address {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #666;
+        }
+        
+        .header-right {
+            text-align: right;
+            flex: 1;
+        }
+        
+        .invoice-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 8px;
+        }
+        
+        .invoice-detail-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+        
+        .invoice-label {
+            color: #666;
+        }
+        
+        .invoice-value {
+            font-weight: 600;
+            color: #1a1a1a;
+            min-width: 100px;
+        }
+        
+        /* Client Section */
+        .client-section {
+            margin-bottom: 8px;
+            padding: 4px 0;
+        }
+        
+        .bill-to-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .client-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 3px;
+        }
+        
+        .client-address {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+        
+        /* Table */
+        .table-container {
+            margin-bottom: 12px;
+            margin-top: 0;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            border: 1px solid #000;
+            table-layout: fixed;
+            height: auto;
+        }
+        
+        thead {
+            border-bottom: 1px solid #000;
+        }
+        
+        th {
+            padding: 8px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: white;
+            color: #000;
+            border: 1px solid #000;
+        }
+        
+        th.text-center {
+            text-align: center;
+        }
+        
+        th.text-right {
+            text-align: right;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #000;
+        }
+        
+        tbody tr:last-child {
+            border-bottom: 1px solid #000;
+        }
+        
+        td {
+            padding: 8px 10px;
+            color: #333;
+            border: 1px solid #000;
+        }
+        
+        td.text-center {
+            text-align: center;
+            color: #666;
+        }
+        
+        td.text-right {
+            text-align: right;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .item-description {
+            font-weight: 500;
+            color: #1a1a1a;
+            line-height: 1.4;
+        }
+        
+        .item-subtext {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+        
+        /* Totals */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+        
+        .totals-box {
+            width: 100%;
+            padding: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 8px 0;
+            font-size: 13px;
+            border-top: 2px solid #1a1a1a;
+        }
+        
+        .total-label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .total-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: right;
+        }
+        
+        /* Signature */
+        .bottom-section {
+            margin-top: auto;
+            padding-top: 24px;
+        }
+        
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .signature-section {
+            text-align: right;
+            grid-column: 2;
+        }
+        
+        .signature {
+            margin-bottom: 6px;
+        }
+        
+        .signature img {
+            height: 80px;
+            width: auto;
+            max-width: 300px;
+        }
+        
+        .signature-line {
+            height: 1px;
+            width: 160px;
+            background: #ccc;
+            margin: 0 0 8px auto;
+        }
+        
+        .signatory-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .signatory-company {
+            font-size: 12px;
+            color: #1a1a1a;
+            font-weight: 500;
+            margin-top: 3px;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            padding: 16px 8%;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            background: white;
+        }
+        
+        .footer-text {
+            font-size: 10px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: nowrap;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .footer-links span {
+            white-space: nowrap;
+        }
+        
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .invoice-paper {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .content-wrapper {
+                padding: 24px;
+            }
+            
+            .header-section {
+                flex-direction: column;
+            }
+            
+            .header-right {
+                text-align: left;
+                width: 100%;
+            }
+            
+            .invoice-title {
+                font-size: 28px;
+            }
+            
+            .bottom-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            
+            .signature-section {
+                text-align: right;
+            }
+            
+            .signature-line {
+                margin: 0 0 12px auto;
+            }
+            
+            .totals-box {
+                min-width: 100%;
+            }
+        }
+        
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+            .invoice-paper {
+                width: 210mm;
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                position: relative;
+                page-break-after: auto;
+            }
+            .invoice-paper:last-child {
+                page-break-after: avoid;
+            }
+            .content-wrapper {
+                padding: 28px 48px 28px 48px;
+            }
+            .client-section + .table-container {
+                page-break-before: avoid !important;
+            }
+            .header-section {
+                margin-bottom: 24px;
+                page-break-inside: avoid;
+            }
+            .client-section {
+                margin-bottom: 8px;
+                page-break-inside: auto;
+                page-break-after: auto;
+            }
+            .table-container {
+                margin-bottom: 4px;
+            }
+            table {
+                border-collapse: collapse;
+                page-break-inside: auto;
+            }
+            thead {
+                display: table-header-group;
+                page-break-inside: avoid;
+            }
+            tbody {
+                display: table-row-group;
+                page-break-before: avoid;
+            }
+            table {
+                page-break-inside: auto;
+                page-break-before: auto;
+            }
+            thead tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            .table-container {
+                page-break-before: auto;
+                page-break-inside: auto;
+            }
+            tbody tr {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+            tbody tr:first-child {
+                page-break-before: avoid !important;
+            }
+            /* Keep Sub Total and Total rows together */
+            tbody tr.total-row-subtotal {
+                page-break-before: avoid;
+                page-break-inside: avoid;
+            }
+            tbody tr.total-row-final {
+                page-break-before: avoid;
+                page-break-inside: avoid;
+            }
+            .bottom-section {
+                margin-top: 20px;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                page-break-inside: auto;
+            }
+            .bottom-grid {
+                margin-bottom: 12px;
+            }
+            .footer {
+                margin-top: 20px;
+                width: 100%;
+                padding: 16px 0;
+                border-top: 1px solid #e0e0e0;
+                text-align: center;
+                background: white;
+                page-break-inside: auto;
+            }
+            .footer-links span {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-paper">
+        <div class="content-wrapper">
+            <!-- Header Section -->
+            <div class="header-section">
+                <div class="header-left">
+                    <img src="assets/logo-Remnow.png" alt="Remnow Logo" class="logo-img">
+                    <h1 class="company-name">Remnow Solutions</h1>
+                    <div class="company-address">
+                        Plot No 7&8, 6th Street, Park Town,<br>
+                        P&T Colony, Madurai-625017, Tamil Nadu<br>
+                        <strong>GST:</strong> 33AMKPG8758K2ZI<br>
+                        <strong>Phone no:</strong> +91 9994164140<br>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <h2 class="invoice-title">QUOTATION</h2>
+                    <div class="invoice-details">
+                        <div class="invoice-detail-row">
+                            <span class="invoice-label">Quotation No:</span>
+                            <span class="invoice-value"></span>
+                        </div>
+                        <div class="invoice-detail-row">
+                            <span class="invoice-label">Date:</span>
+                            <span class="invoice-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Info -->
+            <div class="client-section">
+                <p class="bill-to-label">Bill To</p>
+                <h3 class="client-name"></h3>
+                <p class="client-address"></p>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;">Description of Service</th>
+                            <th class="text-center" style="width: 15%;">HSN Code</th>
+                            <th class="text-center" style="width: 15%;">MONTH</th>
+                            <th class="text-center" style="width: 20%;">Rate</th>
+                            <th class="text-right" style="width: 15%;">Amount (Rs)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Items will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totals Section - Hidden as it's now in table -->
+            <div class="totals-section" style="display: none;">
+                <div class="totals-box">
+                    <div class="total-row">
+                        <span class="total-label">Total</span>
+                        <span class="total-value">$148.12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="bottom-section">
+                <div class="bottom-grid">
+                    <div></div>
+                    <!-- Signature -->
+                    <div class="signature-section">
+                        <div class="signature">
+                            <img src="assets/signature.png" alt="Signature" />
+                        </div>
+                        <div class="signature-line"></div>
+                        <p class="signatory-label">Authorized Signatory</p>
+                        <p class="signatory-company">Remnow Solutions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p class="footer-text">Company Confidential - This communication is confidential between you and REMNOW Solutions</p>
+                <div class="footer-links">
+                    <span>www.remnow.co.in | +91 9994164140</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

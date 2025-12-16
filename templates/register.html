@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Remnow Invoice</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center py-8">
+    <div class="container mx-auto px-4 max-w-md">
+        <div class="card bg-base-100 shadow-2xl">
+            <div class="card-body">
+                <!-- Logo/Header -->
+                <div class="text-center mb-6">
+                    <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-16 mx-auto mb-4">
+                    <h2 class="text-3xl font-bold text-gray-800">Create Account</h2>
+                    <p class="text-gray-600 mt-2">Sign up to get started</p>
+                </div>
+                
+                <!-- Alert Messages -->
+                {% if error %}
+                <div class="alert alert-error shadow-lg mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ error }}</span>
+                </div>
+                {% endif %}
+                
+                <!-- Register Form -->
+                <form method="POST" action="{{ url_for('register') }}" class="space-y-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Full Name</span>
+                        </label>
+                        <input type="text" name="name" placeholder="Enter your full name" 
+                               class="input input-bordered w-full" required autofocus />
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Email</span>
+                        </label>
+                        <input type="email" name="email" placeholder="Enter your email" 
+                               class="input input-bordered w-full" required />
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Password</span>
+                        </label>
+                        <input type="password" name="password" placeholder="Create a password" 
+                               class="input input-bordered w-full" required minlength="6" />
+                        <label class="label">
+                            <span class="label-text-alt text-gray-500">Minimum 6 characters</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Confirm Password</span>
+                        </label>
+                        <input type="password" name="confirm_password" placeholder="Confirm your password" 
+                               class="input input-bordered w-full" required minlength="6" />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-full">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="divider">OR</div>
+                
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}" class="link link-primary font-semibold">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center mt-6 text-sm text-gray-600">
+            <p>&copy; 2025 Remnow Solutions. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

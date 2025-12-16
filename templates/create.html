@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if edit_mode %}Edit{% else %}Create{% endif %} Invoice - Remnow</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
+        .form-container { height: calc(100vh - 64px); overflow-y: auto; padding: 24px; }
+        .tab.tab-active {
+            color: #2563eb !important;
+            border-bottom-color: #2563eb !important;
+            font-weight: 600;
+        }
+        .tab.tab-active svg {
+            color: #2563eb !important;
+        }
+    </style>
+</head>
+<body class="bg-base-200">
+    <!-- Navigation Bar -->
+    <div class="navbar bg-base-100 shadow-lg">
+        <div class="flex-1">
+            <a href="/" class="btn btn-ghost normal-case text-xl">
+                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-8 mr-2">
+            </a>
+        </div>
+        <div class="flex-none gap-2">
+            <!-- Navigation Tabs -->
+            <div class="tabs">
+                <a href="/?tab=quotations" class="tab tab-lifted">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Quotations
+                </a>
+                <a href="/?tab=invoices" class="tab tab-lifted">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+                    </svg>
+                    Invoices
+                </a>
+                <a href="/settings" class="tab tab-lifted">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                </a>
+            </div>
+            <button onclick="saveQuotation()" class="btn btn-sm" style="background-color: #2563eb; color: white;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+                {% if edit_mode %}Update{% else %}Save{% endif %} & Generate PDF
+            </button>
+            <a href="/" class="btn btn-ghost btn-sm">Cancel</a>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div style="height: calc(100vh - 64px);">
+        <!-- FORM -->
+        <div class="bg-base-100 form-container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">{% if edit_mode %}Edit{% else %}Create{% endif %} Document</h2>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm" id="quotationBtn" onclick="setDocumentType('quotation')" style="background-color: #6366f1; color: white;">Quotation</button>
+                    <button type="button" class="btn btn-sm btn-active" id="invoiceBtn" onclick="setDocumentType('invoice')" style="background-color: #6366f1; color: white;">Invoice</button>
+                </div>
+            </div>
+            
+            <form id="quotationForm" class="space-y-6">
+                <!-- Basic Info -->
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm" id="invoiceNoLabel">Invoice Number</span></label>
+                        <input type="text" id="quotation_no" class="input input-bordered input-sm" placeholder="INV/25-26/001" required>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Date</span></label>
+                        <input type="date" id="date" class="input input-bordered input-sm" required>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Currency</span></label>
+                        <select id="currency" class="select select-bordered select-sm">
+                            <option value="USD">USD ($)</option>
+                            <option value="INR" selected>INR (₹)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GBP">GBP (£)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Payment Status</span></label>
+                        <select id="payment_status" class="select select-bordered select-sm">
+                            <option value="unpaid" selected>Unpaid</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-3">
+                    <div class="form-control">
+                        <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Name)</span></label>
+                        <input type="text" id="client_name" class="input input-bordered input-sm" placeholder="Client Name" required>
+                    </div>
+                </div>
+
+
+                    
+
+                <div class="form-control">
+                    <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Address)</span></label>
+                    <textarea id="client_address" class="textarea textarea-bordered textarea-sm" rows="2" placeholder="Address line 1&#10;Address line 2" required></textarea>
+                </div>
+
+
+                
+
+                <!-- Items Section -->
+                <div class="mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="label-text font-semibold text-sm">Items</label>
+                        <button type="button" onclick="addItem()" class="btn btn-xs" style="background-color: #10b981; color: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Item
+                        </button>
+                    </div>
+                    
+                    <div class="border border-gray-300" style="border-radius: 0;">
+                        <table class="w-full text-xs" style="border-radius: 0; border-collapse: collapse;">
+                            <thead>
+                                <tr class="bg-gray-100 border-b border-gray-300">
+                                    <th class="px-2 py-2 text-left font-semibold w-8">#</th>
+                                    <th class="px-2 py-2 text-left font-semibold">Description</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-20">HSN</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-24">Month</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-24">Rate</th>
+                                    <th class="px-2 py-2 text-left font-semibold w-24">Amount</th>
+                                    <th class="px-2 py-2 w-8"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsTableBody">
+                                <!-- Items will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payment Info -->
+                <div id="paymentSection">
+                    <div class="divider my-4">Payment Information</div>
+                    
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Bank Name</span></label>
+                            <input type="text" id="bank_name" class="input input-bordered input-xs" placeholder="Canara Bank">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Branch</span></label>
+                            <input type="text" id="branch_name" class="input input-bordered input-xs" placeholder="Branch Name">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Account Name</span></label>
+                            <input type="text" id="account_name" class="input input-bordered input-xs" placeholder="Account Holder">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Account No</span></label>
+                            <input type="text" id="account_number" class="input input-bordered input-xs" placeholder="1234567890">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">IFSC Code</span></label>
+                            <input type="text" id="ifsc_code" class="input input-bordered input-xs" placeholder="IFSC Code">
+                        </div>
+                        <div class="form-control">
+                            <label class="label py-0"><span class="label-text text-xs">Gpay / PhonePe</span></label>
+                            <input type="text" id="gpay_phonepe" class="input input-bordered input-xs" placeholder="+91 9994164140">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let items = [];
+        let itemCounter = 0;
+        let documentType = 'invoice'; // 'quotation' or 'invoice'
+        
+        // Edit mode variables
+        const editMode = {{ 'true' if edit_mode else 'false' }};
+        const quotationId = {{ quotation.id if edit_mode else 'null' }};
+        {% if edit_mode %}
+        const quotationData = {{ quotation.to_dict()|tojson }};
+        {% endif %}
+
+        // Set today's date
+        document.getElementById('date').valueAsDate = new Date();
+
+        function setDocumentType(type) {
+            documentType = type;
+            
+            // Update button states
+            if (type === 'quotation') {
+                document.getElementById('quotationBtn').classList.add('btn-active');
+                document.getElementById('invoiceBtn').classList.remove('btn-active');
+                document.getElementById('paymentSection').style.display = 'none';
+                document.getElementById('invoiceNoLabel').textContent = 'Quotation Number';
+                document.getElementById('quotation_no').placeholder = 'QUO/25-26/001';
+            } else {
+                document.getElementById('invoiceBtn').classList.add('btn-active');
+                document.getElementById('quotationBtn').classList.remove('btn-active');
+                document.getElementById('paymentSection').style.display = 'block';
+                document.getElementById('invoiceNoLabel').textContent = 'Invoice Number';
+                document.getElementById('quotation_no').placeholder = 'INV/25-26/001';
+            }
+        }
+
+        function addItem() {
+            const item = {
+                id: itemCounter++,
+                description: '',
+                hsn_code: '',
+                month: '',
+                rate: '',
+                amount: ''
+            };
+            items.push(item);
+            renderItems();
+        }
+
+        function removeItem(id) {
+            items = items.filter(item => item.id !== id);
+            renderItems();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsTableBody');
+            if (items.length === 0) {
+                container.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">No items added yet. Click "Add Item" to start.</td></tr>';
+                return;
+            }
+            container.innerHTML = items.map((item, index) => `
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="px-2 py-2 text-center">${index + 1}</td>
+                    <td class="px-2 py-2">
+                        <input type="text" placeholder="Service description" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                           value="${item.description}" oninput="updateItem(${item.id}, 'description', this.value)">
+                    </td>
+                    <td class="px-2 py-2">
+                        <input type="text" placeholder="HSN" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                           value="${item.hsn_code}" oninput="updateItem(${item.id}, 'hsn_code', this.value)">
+                    </td>
+                    <td class="px-2 py-2">
+                        <input type="text" placeholder="Sep 2025" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                           value="${item.month}" oninput="updateItem(${item.id}, 'month', this.value)">
+                    </td>
+                    <td class="px-2 py-2">
+                        <input type="number" placeholder="0" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                           value="${item.rate}" oninput="updateItem(${item.id}, 'rate', this.value)">
+                    </td>
+                    <td class="px-2 py-2">
+                        <input type="number" placeholder="0.00" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                           value="${item.amount}" oninput="updateItem(${item.id}, 'amount', this.value)">
+                    </td>
+                    <td class="px-2 py-2 text-center">
+                        <button type="button" onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700 font-bold">×</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateItem(id, field, value) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item[field] = value;
+            }
+        }
+
+        function formatCurrency(amount, currency) {
+            const symbols = { USD: '$', INR: '₹', EUR: '€', GBP: '£' };
+            return `${symbols[currency] || currency} ${parseFloat(amount || 0).toFixed(2)}`;
+        }
+
+        function calculateTotal() {
+            return items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+        }
+
+        async function saveQuotation() {
+            const formData = {
+                quotation_no: document.getElementById('quotation_no').value,
+                date: document.getElementById('date').value,
+                to_address: document.getElementById('client_name').value + '\n' + document.getElementById('client_address').value,
+                currency: document.getElementById('currency').value,
+                document_type: documentType,
+                payment_status: document.getElementById('payment_status').value,
+                bank_name: document.getElementById('bank_name').value,
+                branch_name: document.getElementById('branch_name').value,
+                account_name: document.getElementById('account_name').value,
+                account_number: document.getElementById('account_number').value,
+                ifsc_code: document.getElementById('ifsc_code').value,
+                gpay_phonepe: document.getElementById('gpay_phonepe').value,
+                items: items.map(item => ({
+                    description: item.description,
+                    hsn_code: item.hsn_code,
+                    month: item.month,
+                    rate: item.rate,
+                    amount: item.amount
+                }))
+            };
+
+            if (!formData.quotation_no || !formData.date || items.length === 0) {
+                alert('Please fill in all required fields and add at least one item');
+                return;
+            }
+
+            try {
+                const url = editMode ? `/api/quotation/${quotationId}` : '/api/quotation';
+                const method = editMode ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(editMode ? 'Document updated successfully!' : 'Document saved successfully!');
+                    window.open(`/api/quotation/${data.id}/pdf`, '_blank');
+                    window.location.href = '/';
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error saving document: ' + error.message);
+            }
+        }
+
+        // Initialize
+        if (editMode) {
+            // Load existing data
+            loadQuotationData();
+        } else {
+            // Add one empty item for new documents
+            addItem();
+        }
+        
+        function loadQuotationData() {
+            // Set document type first
+            documentType = quotationData.document_type;
+            setDocumentType(documentType);
+            
+            // Parse address - first line is client name, rest is address
+            const addressLines = quotationData.to_address.split('\n');
+            const clientName = addressLines[0] || '';
+            const clientAddress = addressLines.slice(1).join('\n');
+            
+            // Fill form fields
+            document.getElementById('quotation_no').value = quotationData.quotation_no;
+            document.getElementById('date').value = quotationData.date;
+            document.getElementById('client_name').value = clientName;
+            document.getElementById('client_address').value = clientAddress;
+            document.getElementById('currency').value = quotationData.currency;
+            document.getElementById('payment_status').value = quotationData.payment_status || 'unpaid';
+            document.getElementById('bank_name').value = quotationData.bank_name || '';
+            document.getElementById('branch_name').value = quotationData.branch_name || '';
+            document.getElementById('account_name').value = quotationData.account_name || '';
+            document.getElementById('account_number').value = quotationData.account_number || '';
+            document.getElementById('ifsc_code').value = quotationData.ifsc_code || '';
+            document.getElementById('gpay_phonepe').value = quotationData.gpay_phonepe || '';
+            
+            // Load items
+            items = [];
+            itemCounter = 0;
+            quotationData.items.forEach(item => {
+                items.push({
+                    id: itemCounter++,
+                    description: item.description || '',
+                    hsn_code: item.hsn_code || '',
+                    month: item.month || '',
+                    rate: item.rate || '',
+                    amount: item.amount || ''
+                });
+            });
+            renderItems();
+        }
+    </script>
+</body>
+</html>
