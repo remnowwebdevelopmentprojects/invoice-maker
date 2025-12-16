@@ -7,7 +7,7 @@ import os
 import re
 import traceback
 from html import escape
-import pdfkit
+from weasyprint import HTML, CSS
 from io import BytesIO
 import zipfile
 import tempfile
@@ -617,47 +617,28 @@ def generate_pdf(quotation_id):
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
         
-        html_content = html_content.replace('src="assets/', f'src="file://{base_dir}/assets/')
-        
-        options = {
-            'page-size': 'A4',
-            'margin-top': '0mm',
-            'margin-right': '0mm',
-            'margin-bottom': '0mm',
-            'margin-left': '0mm',
-            'encoding': "UTF-8",
-            'no-outline': None,
-            'enable-local-file-access': None,
-            'disable-smart-shrinking': None,
-            'print-media-type': None,
-            'dpi': 96
-        }
-        
-        config = None
-        mac_paths = [
-            '/usr/local/bin/wkhtmltopdf',
-            '/opt/homebrew/bin/wkhtmltopdf',
-            '/usr/bin/wkhtmltopdf'
-        ]
-        
-        for path in mac_paths:
-            if os.path.exists(path):
-                config = pdfkit.configuration(wkhtmltopdf=path)
-                break
+        # WeasyPrint handles file paths differently - use absolute paths
+        html_content = html_content.replace('src="assets/', f'src="{base_dir}/assets/')
         
         try:
-            if config:
-                pdf_bytes = pdfkit.from_string(html_content, False, options=options, configuration=config)
-            else:
-                pdf_bytes = pdfkit.from_string(html_content, False, options=options)
+            # Create WeasyPrint HTML object
+            html_doc = HTML(string=html_content, base_url=base_dir)
+            
+            # Define page CSS for A4 with no margins
+            page_css = CSS(string='''
+                @page {
+                    size: A4;
+                    margin: 0;
+                }
+            ''')
+            
+            # Generate PDF
+            pdf_bytes = html_doc.write_pdf(stylesheets=[page_css])
             pdf_file = BytesIO(pdf_bytes)
             pdf_file.seek(0)
         except Exception as e:
             error_msg = str(e)
-            if 'No wkhtmltopdf executable found' in error_msg or 'No such file or directory' in error_msg:
-                raise Exception("wkhtmltopdf not found. Please install it using: brew install wkhtmltopdf")
-            else:
-                raise Exception(f"PDF generation failed: {error_msg}")
+            raise Exception(f"PDF generation failed: {error_msg}")
         
         return send_file(
             pdf_file,
@@ -946,54 +927,35 @@ def view_shared_pdf(token):
             )
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        html_content = html_content.replace('src="assets/', f'src="file://{base_dir}/assets/')
-        
-        options = {
-            'page-size': 'A4',
-            'margin-top': '0mm',
-            'margin-right': '0mm',
-            'margin-bottom': '0mm',
-            'margin-left': '0mm',
-            'encoding': "UTF-8",
-            'no-outline': None,
-            'enable-local-file-access': None,
-            'disable-smart-shrinking': None,
-            'print-media-type': None,
-            'dpi': 96
-        }
-        
-        config = None
-        mac_paths = [
-            '/usr/local/bin/wkhtmltopdf',
-            '/opt/homebrew/bin/wkhtmltopdf',
-            '/usr/bin/wkhtmltopdf'
-        ]
-        
-        for path in mac_paths:
-            if os.path.exists(path):
-                config = pdfkit.configuration(wkhtmltopdf=path)
-                break
+        # WeasyPrint handles file paths differently - use absolute paths
+        html_content = html_content.replace('src="assets/', f'src="{base_dir}/assets/')
         
         try:
-            if config:
-                pdf_bytes = pdfkit.from_string(html_content, False, options=options, configuration=config)
-            else:
-                pdf_bytes = pdfkit.from_string(html_content, False, options=options)
+            # Create WeasyPrint HTML object
+            html_doc = HTML(string=html_content, base_url=base_dir)
+            
+            # Define page CSS for A4 with no margins
+            page_css = CSS(string='''
+                @page {
+                    size: A4;
+                    margin: 0;
+                }
+            ''')
+            
+            # Generate PDF
+            pdf_bytes = html_doc.write_pdf(stylesheets=[page_css])
             pdf_file = BytesIO(pdf_bytes)
             pdf_file.seek(0)
+            
+            return send_file(
+                pdf_file,
+                mimetype='application/pdf',
+                as_attachment=True,
+                download_name=f'{quotation.quotation_no}.pdf'
+            )
         except Exception as e:
             error_msg = str(e)
-            if 'No wkhtmltopdf executable found' in error_msg or 'No such file or directory' in error_msg:
-                raise Exception("wkhtmltopdf not found. Please install it using: brew install wkhtmltopdf")
-            else:
-                raise Exception(f"PDF generation failed: {error_msg}")
-        
-        return send_file(
-            pdf_file,
-            mimetype='application/pdf',
-            as_attachment=True,
-            download_name=f'{quotation.quotation_no}.pdf'
-        )
+            raise Exception(f"PDF generation failed: {error_msg}")
         
     except Exception as e:
         return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
@@ -1473,36 +1435,23 @@ def generate_pdf_content(quotation):
             )
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        options = {
-            'page-size': 'A4',
-            'margin-top': '0mm',
-            'margin-right': '0mm',
-            'margin-bottom': '0mm',
-            'margin-left': '0mm',
-            'encoding': "UTF-8",
-            'no-outline': None,
-            'enable-local-file-access': None,
-            'disable-smart-shrinking': None,
-            'print-media-type': None,
-            'dpi': 96
-        }
         
-        config = None
-        mac_paths = [
-            '/usr/local/bin/wkhtmltopdf',
-            '/opt/homebrew/bin/wkhtmltopdf',
-            '/usr/bin/wkhtmltopdf'
-        ]
+        # WeasyPrint handles file paths differently - use absolute paths
+        html_content = html_content.replace('src="assets/', f'src="{base_dir}/assets/')
         
-        for path in mac_paths:
-            if os.path.exists(path):
-                config = pdfkit.configuration(wkhtmltopdf=path)
-                break
+        # Create WeasyPrint HTML object
+        html_doc = HTML(string=html_content, base_url=base_dir)
         
-        if config:
-            pdf_content = pdfkit.from_string(html_content, False, options=options, configuration=config)
-        else:
-            pdf_content = pdfkit.from_string(html_content, False, options=options)
+        # Define page CSS for A4 with no margins
+        page_css = CSS(string='''
+            @page {
+                size: A4;
+                margin: 0;
+            }
+        ''')
+        
+        # Generate PDF
+        pdf_content = html_doc.write_pdf(stylesheets=[page_css])
         return pdf_content
         
     except Exception as e:
