@@ -79,6 +79,7 @@ class Quotation(db.Model):
     
     total_amount = db.Column(db.Numeric(10, 2), nullable=False)
     share_token = db.Column(db.String(100), unique=True, nullable=True)
+    voided = db.Column(db.Boolean, default=False, nullable=False)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -963,6 +964,7 @@ def bulk_export_count():
         to_date = datetime.strptime(data['to_date'], '%Y-%m-%d').date()
         include_quotations = data.get('include_quotations', True)
         include_invoices = data.get('include_invoices', True)
+        payment_status = data.get('payment_status', 'all')  # 'all', 'paid', or 'unpaid'
         
         query_filter = (
             (Quotation.user_id == current_user.id) &
@@ -975,10 +977,17 @@ def bulk_export_count():
         total_count = 0
         for doc in documents:
             doc_type = doc.document_type.lower()
+            # Check document type
             if doc_type == 'quotation' and include_quotations:
                 total_count += 1
             elif doc_type == 'invoice' and include_invoices:
-                total_count += 1
+                # Apply payment status filter for invoices
+                if payment_status == 'all':
+                    total_count += 1
+                elif payment_status == 'paid' and doc.payment_status == 'paid':
+                    total_count += 1
+                elif payment_status == 'unpaid' and doc.payment_status != 'paid':
+                    total_count += 1
         
         return jsonify({
             'total_documents': total_count,
@@ -999,6 +1008,7 @@ def bulk_export():
         to_date = datetime.strptime(data['to_date'], '%Y-%m-%d').date()
         include_quotations = data.get('include_quotations', True)
         include_invoices = data.get('include_invoices', True)
+        payment_status = data.get('payment_status', 'all')  # 'all', 'paid', or 'unpaid'
         
         temp_dir = tempfile.mkdtemp()
         
@@ -1029,6 +1039,13 @@ def bulk_export():
                     continue
                 if doc_type == 'invoice' and not include_invoices:
                     continue
+                
+                # Apply payment status filter for invoices
+                if doc_type == 'invoice':
+                    if payment_status == 'paid' and doc.payment_status != 'paid':
+                        continue
+                    elif payment_status == 'unpaid' and doc.payment_status == 'paid':
+                        continue
                 
                 pdf_content = generate_pdf_content(doc)
                 
