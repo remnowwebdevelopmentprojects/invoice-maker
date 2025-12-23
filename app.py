@@ -53,6 +53,14 @@ class User(UserMixin, db.Model):
     invoice_prefix = db.Column(db.String(50), default='INV/25-26/')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+    # Payment info fields
+    bank_name = db.Column(db.String(200))
+    branch_name = db.Column(db.String(200))
+    account_name = db.Column(db.String(200))
+    account_number = db.Column(db.String(50))
+    ifsc_code = db.Column(db.String(20))
+    gpay_phonepe = db.Column(db.String(50))
+    
     quotations = db.relationship('Quotation', backref='user', lazy=True)
     
     def set_password(self, password):
@@ -89,6 +97,8 @@ class Quotation(db.Model):
     
     items = db.Column(db.JSON, nullable=False)
     
+    sub_total = db.Column(db.Numeric(10, 2))
+    gst_amount = db.Column(db.Numeric(10, 2))
     total_amount = db.Column(db.Numeric(10, 2), nullable=False)
     share_token = db.Column(db.String(100), unique=True, nullable=True)
     voided = db.Column(db.Boolean, default=False, nullable=False)
@@ -123,6 +133,8 @@ class Quotation(db.Model):
             'sgst_rate': float(self.sgst_rate) if self.sgst_rate else None,
             'igst_rate': float(self.igst_rate) if self.igst_rate else None,
             'items': self.items,
+            'sub_total': str(self.sub_total) if self.sub_total else None,
+            'gst_amount': str(self.gst_amount) if self.gst_amount else None,
             'total_amount': str(self.total_amount)
         }
 
@@ -290,6 +302,34 @@ def update_prefixes():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/settings/payment-info', methods=['GET', 'POST'])
+@login_required
+def payment_info():
+    """Get or update payment information"""
+    if request.method == 'GET':
+        return jsonify({
+            'bank_name': current_user.bank_name or '',
+            'branch_name': current_user.branch_name or '',
+            'account_name': current_user.account_name or '',
+            'account_number': current_user.account_number or '',
+            'ifsc_code': current_user.ifsc_code or '',
+            'gpay_phonepe': current_user.gpay_phonepe or ''
+        }), 200
+    else:
+        try:
+            data = request.json
+            current_user.bank_name = data.get('bank_name', '')
+            current_user.branch_name = data.get('branch_name', '')
+            current_user.account_name = data.get('account_name', '')
+            current_user.account_number = data.get('account_number', '')
+            current_user.ifsc_code = data.get('ifsc_code', '')
+            current_user.gpay_phonepe = data.get('gpay_phonepe', '')
+            db.session.commit()
+            return jsonify({'message': 'Payment information updated successfully'}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
+
 @app.route('/api/quotation', methods=['POST'])
 @login_required
 def create_quotation():
@@ -301,13 +341,30 @@ def create_quotation():
             if field not in data:
                 return jsonify({'error': f'Missing required field: {field}'}), 400
         
-        total = 0
+        # Calculate sub_total (sum of all item amounts)
+        sub_total = 0
         for item in data['items']:
             if 'amount' in item and item['amount']:
                 try:
-                    total += float(item['amount'])
+                    sub_total += float(item['amount'])
                 except (ValueError, TypeError):
                     pass
+        
+        # Calculate GST amount and total
+        gst_amount = 0
+        gst_type = data.get('gst_type')
+        currency = data['currency']
+        
+        if currency == 'INR' and gst_type:
+            if gst_type == 'intrastate':
+                cgst_rate = float(data.get('cgst_rate', 0)) if data.get('cgst_rate') else 0
+                sgst_rate = float(data.get('sgst_rate', 0)) if data.get('sgst_rate') else 0
+                gst_amount = (sub_total * cgst_rate / 100) + (sub_total * sgst_rate / 100)
+            elif gst_type == 'interstate':
+                igst_rate = float(data.get('igst_rate', 0)) if data.get('igst_rate') else 0
+                gst_amount = sub_total * igst_rate / 100
+        
+        total = sub_total + gst_amount
         
         quotation = Quotation(
             user_id=current_user.id,
@@ -329,6 +386,8 @@ def create_quotation():
             sgst_rate=float(data.get('sgst_rate', 0)) if data.get('sgst_rate') else None,
             igst_rate=float(data.get('igst_rate', 0)) if data.get('igst_rate') else None,
             items=data['items'],
+            sub_total=sub_total,
+            gst_amount=gst_amount,
             total_amount=total
         )
         
@@ -355,13 +414,30 @@ def update_quotation(quotation_id):
             if field not in data:
                 return jsonify({'error': f'Missing required field: {field}'}), 400
         
-        total = 0
+        # Calculate sub_total (sum of all item amounts)
+        sub_total = 0
         for item in data['items']:
             if 'amount' in item and item['amount']:
                 try:
-                    total += float(item['amount'])
+                    sub_total += float(item['amount'])
                 except (ValueError, TypeError):
                     pass
+        
+        # Calculate GST amount and total
+        gst_amount = 0
+        gst_type = data.get('gst_type')
+        currency = data['currency']
+        
+        if currency == 'INR' and gst_type:
+            if gst_type == 'intrastate':
+                cgst_rate = float(data.get('cgst_rate', 0)) if data.get('cgst_rate') else 0
+                sgst_rate = float(data.get('sgst_rate', 0)) if data.get('sgst_rate') else 0
+                gst_amount = (sub_total * cgst_rate / 100) + (sub_total * sgst_rate / 100)
+            elif gst_type == 'interstate':
+                igst_rate = float(data.get('igst_rate', 0)) if data.get('igst_rate') else 0
+                gst_amount = sub_total * igst_rate / 100
+        
+        total = sub_total + gst_amount
         
         # Update quotation fields
         quotation.quotation_no = data['quotation_no']
@@ -382,6 +458,8 @@ def update_quotation(quotation_id):
         quotation.sgst_rate = float(data.get('sgst_rate', 0)) if data.get('sgst_rate') else None
         quotation.igst_rate = float(data.get('igst_rate', 0)) if data.get('igst_rate') else None
         quotation.items = data['items']
+        quotation.sub_total = sub_total
+        quotation.gst_amount = gst_amount
         quotation.total_amount = total
         
         db.session.commit()
@@ -469,31 +547,38 @@ def generate_pdf(quotation_id):
                         </tr>
 '''
         
-        total_amount = float(quotation.total_amount)
+        # Use stored sub_total and gst_amount when available
+        base_amount = float(quotation.sub_total) if quotation.sub_total is not None else float(quotation.total_amount)
+        stored_gst_amount = float(quotation.gst_amount) if quotation.gst_amount is not None else 0.0
+        total_amount = base_amount + stored_gst_amount
+
         if quotation.currency == 'USD':
+            subtotal_display = f'${base_amount:.2f}'
             total_display = f'${total_amount:.2f}'
             currency_text = 'In Dollars'
         elif quotation.currency == 'INR':
+            subtotal_display = f'₹{base_amount:.2f}'
             total_display = f'₹{total_amount:.2f}'
             currency_text = 'In Rupees'
         else:
+            subtotal_display = f'{quotation.currency} {base_amount:.2f}'
             total_display = f'{quotation.currency} {total_amount:.2f}'
             currency_text = f'In {quotation.currency}'
         
-        # Calculate GST if currency is INR
+        # Calculate GST rows if currency is INR
         final_total = total_amount
         if quotation.currency == 'INR' and quotation.gst_type:
             items_html += f'''                        <tr class="total-row-subtotal">
                             <td colspan="3"></td>
                             <td class="text-center" style="border-top: 2px solid #000; font-weight: 700;">Sub Total</td>
-                            <td class="text-right" style="border-top: 2px solid #000; font-weight: 700;">{total_display}</td>
+                            <td class="text-right" style="border-top: 2px solid #000; font-weight: 700;">{subtotal_display}</td>
                         </tr>
 '''
             
             if quotation.gst_type == 'intrastate' and quotation.cgst_rate and quotation.sgst_rate:
-                cgst_amount = total_amount * float(quotation.cgst_rate) / 100
-                sgst_amount = total_amount * float(quotation.sgst_rate) / 100
-                final_total = total_amount + cgst_amount + sgst_amount
+                cgst_amount = base_amount * float(quotation.cgst_rate) / 100
+                sgst_amount = base_amount * float(quotation.sgst_rate) / 100
+                final_total = base_amount + cgst_amount + sgst_amount
                 
                 cgst_display = f'₹{cgst_amount:.2f}'
                 sgst_display = f'₹{sgst_amount:.2f}'
@@ -511,8 +596,8 @@ def generate_pdf(quotation_id):
                         </tr>
 '''
             elif quotation.gst_type == 'interstate' and quotation.igst_rate:
-                igst_amount = total_amount * float(quotation.igst_rate) / 100
-                final_total = total_amount + igst_amount
+                igst_amount = base_amount * float(quotation.igst_rate) / 100
+                final_total = base_amount + igst_amount
                 
                 igst_display = f'₹{igst_amount:.2f}'
                 final_display = f'₹{final_total:.2f}'
@@ -764,31 +849,38 @@ def view_shared_pdf(token):
                         </tr>
 '''
         
-        total_amount = float(quotation.total_amount)
+        # Use stored sub_total and gst_amount when available
+        base_amount = float(quotation.sub_total) if quotation.sub_total is not None else float(quotation.total_amount)
+        stored_gst_amount = float(quotation.gst_amount) if quotation.gst_amount is not None else 0.0
+        total_amount = base_amount + stored_gst_amount
+
         if quotation.currency == 'USD':
+            subtotal_display = f'${base_amount:.2f}'
             total_display = f'${total_amount:.2f}'
             currency_text = 'In Dollars'
         elif quotation.currency == 'INR':
+            subtotal_display = f'₹{base_amount:.2f}'
             total_display = f'₹{total_amount:.2f}'
             currency_text = 'In Rupees'
         else:
+            subtotal_display = f'{quotation.currency} {base_amount:.2f}'
             total_display = f'{quotation.currency} {total_amount:.2f}'
             currency_text = f'In {quotation.currency}'
         
-        # Calculate GST if currency is INR
+        # Calculate GST rows if currency is INR
         final_total = total_amount
         if quotation.currency == 'INR' and quotation.gst_type:
             items_html += f'''                        <tr class="total-row-subtotal">
                             <td colspan="3"></td>
                             <td class="text-center" style="border-top: 2px solid #000; font-weight: 700;">Sub Total</td>
-                            <td class="text-right" style="border-top: 2px solid #000; font-weight: 700;">{total_display}</td>
+                            <td class="text-right" style="border-top: 2px solid #000; font-weight: 700;">{subtotal_display}</td>
                         </tr>
 '''
             
             if quotation.gst_type == 'intrastate' and quotation.cgst_rate and quotation.sgst_rate:
-                cgst_amount = total_amount * float(quotation.cgst_rate) / 100
-                sgst_amount = total_amount * float(quotation.sgst_rate) / 100
-                final_total = total_amount + cgst_amount + sgst_amount
+                cgst_amount = base_amount * float(quotation.cgst_rate) / 100
+                sgst_amount = base_amount * float(quotation.sgst_rate) / 100
+                final_total = base_amount + cgst_amount + sgst_amount
                 
                 cgst_display = f'₹{cgst_amount:.2f}'
                 sgst_display = f'₹{sgst_amount:.2f}'
@@ -806,8 +898,8 @@ def view_shared_pdf(token):
                         </tr>
 '''
             elif quotation.gst_type == 'interstate' and quotation.igst_rate:
-                igst_amount = total_amount * float(quotation.igst_rate) / 100
-                final_total = total_amount + igst_amount
+                igst_amount = base_amount * float(quotation.igst_rate) / 100
+                final_total = base_amount + igst_amount
                 
                 igst_display = f'₹{igst_amount:.2f}'
                 final_display = f'₹{final_total:.2f}'
@@ -1284,31 +1376,38 @@ def generate_pdf_content(quotation):
                         </tr>
 '''
         
-        total_amount = float(quotation.total_amount)
+        # Use stored sub_total and gst_amount when available
+        base_amount = float(quotation.sub_total) if quotation.sub_total is not None else float(quotation.total_amount)
+        stored_gst_amount = float(quotation.gst_amount) if quotation.gst_amount is not None else 0.0
+        total_amount = base_amount + stored_gst_amount
+
         if quotation.currency == 'USD':
+            subtotal_display = f'${base_amount:.2f}'
             total_display = f'${total_amount:.2f}'
             currency_text = 'In Dollars'
         elif quotation.currency == 'INR':
+            subtotal_display = f'₹{base_amount:.2f}'
             total_display = f'₹{total_amount:.2f}'
             currency_text = 'In Rupees'
         else:
+            subtotal_display = f'{quotation.currency} {base_amount:.2f}'
             total_display = f'{quotation.currency} {total_amount:.2f}'
             currency_text = f'In {quotation.currency}'
         
-        # Calculate GST if currency is INR
+        # Calculate GST rows if currency is INR
         final_total = total_amount
         if quotation.currency == 'INR' and quotation.gst_type:
             items_html += f'''                        <tr class="total-row-subtotal">
                             <td colspan="3"></td>
                             <td class="text-center" style="border-top: 2px solid #000; font-weight: 700;">Sub Total</td>
-                            <td class="text-right" style="border-top: 2px solid #000; font-weight: 700;">{total_display}</td>
+                            <td class="text-right" style="border-top: 2px solid #000; font-weight: 700;">{subtotal_display}</td>
                         </tr>
 '''
             
             if quotation.gst_type == 'intrastate' and quotation.cgst_rate and quotation.sgst_rate:
-                cgst_amount = total_amount * float(quotation.cgst_rate) / 100
-                sgst_amount = total_amount * float(quotation.sgst_rate) / 100
-                final_total = total_amount + cgst_amount + sgst_amount
+                cgst_amount = base_amount * float(quotation.cgst_rate) / 100
+                sgst_amount = base_amount * float(quotation.sgst_rate) / 100
+                final_total = base_amount + cgst_amount + sgst_amount
                 
                 cgst_display = f'₹{cgst_amount:.2f}'
                 sgst_display = f'₹{sgst_amount:.2f}'
@@ -1326,8 +1425,8 @@ def generate_pdf_content(quotation):
                         </tr>
 '''
             elif quotation.gst_type == 'interstate' and quotation.igst_rate:
-                igst_amount = total_amount * float(quotation.igst_rate) / 100
-                final_total = total_amount + igst_amount
+                igst_amount = base_amount * float(quotation.igst_rate) / 100
+                final_total = base_amount + igst_amount
                 
                 igst_display = f'₹{igst_amount:.2f}'
                 final_display = f'₹{final_total:.2f}'

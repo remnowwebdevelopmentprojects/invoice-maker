@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Remnow Invoice</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -22,36 +27,66 @@
     <div class="navbar bg-base-100 shadow-lg">
         <div class="flex-1">
             <a href="/" class="btn btn-ghost normal-case text-xl">
-                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-8 mr-2">
+                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-6 sm:h-8 mr-2">
             </a>
         </div>
-        <div class="flex-none gap-2">
-            <!-- Navigation Tabs -->
-            <div class="tabs">
+        <div class="flex-none gap-1 sm:gap-2">
+            <!-- Mobile Menu Button -->
+            <div class="dropdown dropdown-end lg:hidden">
+                <label tabindex="0" class="btn btn-ghost btn-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </label>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a href="/?tab=quotations" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Quotations
+                    </a></li>
+                    <li><a href="/?tab=invoices" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+                        </svg>
+                        Invoices
+                    </a></li>
+                    <li><a href="/settings" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Settings
+                    </a></li>
+                </ul>
+            </div>
+            
+            <!-- Desktop Navigation Tabs -->
+            <div class="tabs hidden lg:flex">
                 <a href="/?tab=quotations" class="tab tab-lifted">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Quotations
+                    <span class="hidden xl:inline">Quotations</span>
                 </a>
                 <a href="/?tab=invoices" class="tab tab-lifted">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
                     </svg>
-                    Invoices
+                    <span class="hidden xl:inline">Invoices</span>
                 </a>
                 <a href="/settings" class="tab tab-lifted tab-active" style="color: #2563eb; border-bottom-color: #2563eb;">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    Settings
+                    <span class="hidden xl:inline">Settings</span>
                 </a>
             </div>
             <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder">
-                    <div class="bg-neutral-focus text-neutral-content rounded-full w-10">
-                        <span class="text-xl">{{ current_user.name[0].upper() }}</span>
+                    <div class="bg-neutral-focus text-neutral-content rounded-full w-8 sm:w-10">
+                        <span class="text-lg sm:text-xl">{{ current_user.name[0].upper() }}</span>
                     </div>
                 </label>
                 <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
@@ -66,16 +101,16 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-4xl mx-auto px-4 py-6">
-        <div class="border-b border-gray-200 pb-4 mb-6">
-            <h2 class="text-2xl font-semibold text-gray-800">Settings</h2>
-            <p class="text-sm text-gray-600 mt-1">Configure your invoice and quotation preferences</p>
+    <div class="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <div class="border-b border-gray-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Settings</h2>
+            <p class="text-xs sm:text-sm text-gray-600 mt-1">Configure your invoice and quotation preferences</p>
         </div>
 
         <!-- Document Prefix Settings -->
-        <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 class="text-lg font-semibold mb-4">Document Number Prefixes</h3>
-            <form id="prefixForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+            <h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Document Number Prefixes</h3>
+            <form id="prefixForm" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text font-semibold">Quotation Prefix</span>
@@ -100,6 +135,58 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
                         Save Prefixes
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Payment Info Settings -->
+        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+            <h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Payment Information</h3>
+            <p class="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">This information will be auto-populated when creating invoices or quotations</p>
+            <form id="paymentInfoForm" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">Bank Name</span>
+                    </label>
+                    <input type="text" id="paymentBankName" class="input input-bordered" placeholder="e.g., Canara Bank" value="{{ current_user.bank_name or '' }}">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">Branch</span>
+                    </label>
+                    <input type="text" id="paymentBranchName" class="input input-bordered" placeholder="e.g., Madurai Main Branch" value="{{ current_user.branch_name or '' }}">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">Account Name</span>
+                    </label>
+                    <input type="text" id="paymentAccountName" class="input input-bordered" placeholder="Account Holder Name" value="{{ current_user.account_name or '' }}">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">Account Number</span>
+                    </label>
+                    <input type="text" id="paymentAccountNumber" class="input input-bordered" placeholder="1234567890" value="{{ current_user.account_number or '' }}">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">IFSC Code</span>
+                    </label>
+                    <input type="text" id="paymentIfscCode" class="input input-bordered" placeholder="e.g., CNRB0001234" value="{{ current_user.ifsc_code or '' }}">
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">GPay / PhonePe</span>
+                    </label>
+                    <input type="text" id="paymentGpayPhonepe" class="input input-bordered" placeholder="+91 9994164140" value="{{ current_user.gpay_phonepe or '' }}">
+                </div>
+                <div class="md:col-span-2">
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Save Payment Info
                     </button>
                 </div>
             </form>
@@ -190,6 +277,40 @@
     </div>
 
     <script>
+        // Handle payment info form submission
+        document.getElementById('paymentInfoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const paymentData = {
+                bank_name: document.getElementById('paymentBankName').value,
+                branch_name: document.getElementById('paymentBranchName').value,
+                account_name: document.getElementById('paymentAccountName').value,
+                account_number: document.getElementById('paymentAccountNumber').value,
+                ifsc_code: document.getElementById('paymentIfscCode').value,
+                gpay_phonepe: document.getElementById('paymentGpayPhonepe').value
+            };
+
+            try {
+                const response = await fetch('/api/settings/payment-info', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Payment information updated successfully!');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error updating payment information: ' + error.message);
+            }
+        });
+
         // Handle prefix form submission
         document.getElementById('prefixForm').addEventListener('submit', async function(e) {
             e.preventDefault();

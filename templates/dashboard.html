@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Remnow Invoice</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -29,32 +34,92 @@
         .voided-invoice:hover {
             background-color: #fecaca !important;
         }
+        .navbar {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        .navbar::-webkit-scrollbar {
+            display: none;
+        }
+        .navbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @media (max-width: 1279px) {
+            .navbar .tabs {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-white min-h-screen">
     <!-- Navigation Bar -->
-    <div class="navbar bg-base-100 shadow-lg">
-        <div class="flex-1">
-            <a href="/" class="btn btn-ghost normal-case text-xl">
-                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-8 mr-2">
+    <div class="navbar bg-base-100 shadow-lg px-2 sm:px-4">
+        <div class="flex-1 min-w-0">
+            <a href="/" class="btn btn-ghost normal-case text-lg sm:text-xl px-1 sm:px-2">
+                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-6 sm:h-8 mr-1 sm:mr-2">
+                <span class="hidden sm:inline">Remnow</span>
             </a>
         </div>
-        <div class="flex-none gap-2">
-            <!-- Navigation Tabs -->
-            <div class="tabs">
-                <a class="tab tab-lifted tab-active" id="quotationsTab" onclick="showTab('quotations')">
+        <div class="flex-none gap-0 sm:gap-1 lg:gap-2">
+            <!-- Mobile Menu Button -->
+            <div class="dropdown dropdown-end xl:hidden">
+                <label tabindex="0" class="btn btn-ghost btn-circle btn-sm sm:btn-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </label>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 right-0">
+                    <li><a onclick="showTab('quotations')" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Quotations
+                    </a></li>
+                    <li><a onclick="showTab('invoices')" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+                        </svg>
+                        Invoices
+                    </a></li>
+                    <li><a href="/settings" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Settings
+                    </a></li>
+                    <li><a onclick="document.getElementById('createModal').showModal()" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Create New
+                    </a></li>
+                    <li><a onclick="document.getElementById('bulkExportModal').showModal()" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Bulk Export
+                    </a></li>
+                </ul>
+            </div>
+            
+            <!-- Desktop Navigation Tabs -->
+            <div class="tabs hidden xl:flex">
+                <a class="tab tab-lifted tab-active text-xs sm:text-sm" id="quotationsTab" onclick="showTab('quotations')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     Quotations
                 </a> 
-                <a class="tab tab-lifted" id="invoicesTab" onclick="showTab('invoices')">
+                <a class="tab tab-lifted text-xs sm:text-sm" id="invoicesTab" onclick="showTab('invoices')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
                     </svg>
                     Invoices
                 </a>
-                <a href="/settings" class="tab tab-lifted">
+                <a href="/settings" class="tab tab-lifted text-xs sm:text-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -62,22 +127,22 @@
                     Settings
                 </a>
             </div>
-            <button onclick="document.getElementById('createModal').showModal()" class="btn btn-primary btn-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button onclick="document.getElementById('createModal').showModal()" class="btn btn-primary btn-xs sm:btn-sm hidden xl:flex">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
-                Create New
+                <span class="hidden 2xl:inline">Create New</span>
             </button>
-            <button onclick="document.getElementById('bulkExportModal').showModal()" class="btn btn-primary btn-sm ml-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button onclick="document.getElementById('bulkExportModal').showModal()" class="btn btn-primary btn-xs sm:btn-sm hidden xl:flex ml-1 sm:ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Bulk Export
+                <span class="hidden 2xl:inline">Bulk Export</span>
             </button>
             <div class="dropdown dropdown-end">
-                <label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder">
-                    <div class="bg-neutral-focus text-neutral-content rounded-full w-10">
-                        <span class="text-xl">{{ current_user.name[0].upper() }}</span>
+                <label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder btn-sm sm:btn-md">
+                    <div class="bg-neutral-focus text-neutral-content rounded-full w-7 h-7 sm:w-10 sm:h-10">
+                        <span class="text-sm sm:text-xl">{{ current_user.name[0].upper() }}</span>
                     </div>
                 </label>
                 <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
@@ -92,24 +157,24 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
 
         <!-- Quotations Tab Content -->
         <div id="quotationsContent" class="tab-content">
-            <div class="border-b border-gray-200 pb-4 mb-6">
+            <div class="border-b border-gray-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-semibold text-gray-800">Quotations</h2>
-                    <div class="text-sm font-medium text-gray-600">{{ quotations|length }} Total</div>
+                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Quotations</h2>
+                    <div class="text-xs sm:text-sm font-medium text-gray-600">{{ quotations|length }} Total</div>
                 </div>
             </div>
             
             <!-- Search and Filter Section -->
-            <div class="mb-6 flex flex-wrap gap-4 items-center">
-                <div class="flex-1 min-w-[300px]">
-                    <input type="text" id="searchQuotations" placeholder="Search by quotation no, client name..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" onkeyup="filterTable('quotations')">
+            <div class="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+                <div class="flex-1 w-full sm:min-w-[200px]">
+                    <input type="text" id="searchQuotations" placeholder="Search by quotation no, client name..." class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base" onkeyup="filterTable('quotations')">
                 </div>
-                <div class="flex gap-2">
-                    <select id="monthFilterQuotations" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterTable('quotations')">
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <select id="monthFilterQuotations" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" onchange="filterTable('quotations')">
                         <option value="">All Months</option>
                         <option value="2025-12">December 2025</option>
                         <option value="2025-11">November 2025</option>
@@ -117,17 +182,18 @@
                         <option value="2025-09">September 2025</option>
                         <option value="2025-08">August 2025</option>
                     </select>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2" onclick="resetFilters('quotations')">
+                    <button class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base" onclick="resetFilters('quotations')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Reset
+                        <span>Reset</span>
                     </button>
                 </div>
             </div>
             
             {% if quotations %}
-            <div class="overflow-x-auto">
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full" id="quotationsTable">
                     <thead>
                         <tr class="border-b border-gray-300">
@@ -188,6 +254,59 @@
                 </table>
             </div>
             
+            <!-- Mobile Card View -->
+            <div class="md:hidden space-y-3" id="quotationsTableMobile">
+                {% for quotation in quotations %}
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm" data-date="{{ quotation.date.strftime('%Y-%m') }}" data-search="{{ quotation.quotation_no|lower }} {{ quotation.to_address.split('\n')[0]|lower if quotation.to_address else '' }}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-semibold text-gray-900 text-sm">{{ quotation.quotation_no }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">{{ quotation.date.strftime('%d-%b-%Y') }}</p>
+                        </div>
+                        <div class="relative">
+                            <button onclick="toggleActionMenu(event, 'quotation-mobile-{{ quotation.id }}')" class="inline-flex items-center px-2 py-1 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                            </button>
+                            <div id="quotation-mobile-{{ quotation.id }}" class="action-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <div class="py-1">
+                                    <button onclick="openEditModal({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        Edit
+                                    </button>
+                                    <a href="/api/quotation/{{ quotation.id }}/pdf" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                        View PDF
+                                    </a>
+                                    <button onclick="shareOnWhatsApp({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                        </svg>
+                                        Share on WhatsApp
+                                    </button>
+                                    <button onclick="duplicateDocument({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                        Duplicate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-100">
+                        <p class="text-xs text-gray-600 mb-1"><span class="font-medium">Bill To:</span> {{ quotation.to_address.split('\n')[0] if quotation.to_address else 'N/A' }}</p>
+                        <p class="text-sm font-semibold text-gray-900"><span class="font-medium">Total:</span> {{ quotation.currency }} {{ quotation.total_amount }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
             <!-- Pagination -->
             <div class="mt-6 flex justify-between items-center">
                 <div class="text-sm text-gray-600">
@@ -213,20 +332,20 @@
 
         <!-- Invoices Tab Content -->
         <div id="invoicesContent" class="tab-content hidden">
-            <div class="border-b border-gray-200 pb-4 mb-6">
+            <div class="border-b border-gray-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-2xl font-semibold text-gray-800">Invoices</h2>
-                    <div class="text-sm font-medium text-gray-600">{{ invoices|length }} Total</div>
+                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Invoices</h2>
+                    <div class="text-xs sm:text-sm font-medium text-gray-600">{{ invoices|length }} Total</div>
                 </div>
             </div>
             
             <!-- Search and Filter Section -->
-            <div class="mb-6 flex flex-wrap gap-4 items-center">
-                <div class="flex-1 min-w-[300px]">
-                    <input type="text" id="searchInvoices" placeholder="Search by invoice no, client name..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" onkeyup="filterTable('invoices')">
+            <div class="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+                <div class="flex-1 w-full sm:min-w-[200px]">
+                    <input type="text" id="searchInvoices" placeholder="Search by invoice no, client name..." class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base" onkeyup="filterTable('invoices')">
                 </div>
-                <div class="flex gap-2">
-                    <select id="monthFilterInvoices" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" onchange="filterTable('invoices')">
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <select id="monthFilterInvoices" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base" onchange="filterTable('invoices')">
                         <option value="">All Months</option>
                         <option value="2025-12">December 2025</option>
                         <option value="2025-11">November 2025</option>
@@ -234,22 +353,23 @@
                         <option value="2025-09">September 2025</option>
                         <option value="2025-08">August 2025</option>
                     </select>
-                    <select id="paymentStatusFilterInvoices" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" onchange="filterTable('invoices')">
+                    <select id="paymentStatusFilterInvoices" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base" onchange="filterTable('invoices')">
                         <option value="">All Status</option>
                         <option value="paid">Paid</option>
                         <option value="unpaid">Unpaid</option>
                     </select>
-                    <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2" onclick="resetFilters('invoices')">
+                    <button class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base" onclick="resetFilters('invoices')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Reset
+                        <span>Reset</span>
                     </button>
                 </div>
             </div>
             
             {% if invoices %}
-            <div class="overflow-x-auto">
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full" id="invoicesTable">
                     <thead>
                         <tr class="border-b border-gray-300">
@@ -329,6 +449,76 @@
                 </table>
             </div>
             
+            <!-- Mobile Card View -->
+            <div class="md:hidden space-y-3" id="invoicesTableMobile">
+                {% for invoice in invoices %}
+                <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm {% if invoice.voided %}voided-invoice{% endif %}" data-date="{{ invoice.date.strftime('%Y-%m') }}" data-search="{{ invoice.quotation_no|lower }} {{ invoice.to_address.split('\n')[0]|lower if invoice.to_address else '' }}" data-payment-status="{{ invoice.payment_status or 'unpaid' }}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="font-semibold text-gray-900 text-sm">{{ invoice.quotation_no }}
+                                {% if invoice.voided %}
+                                <span class="ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-100 text-red-800">VOIDED</span>
+                                {% endif %}
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1">{{ invoice.date.strftime('%d-%b-%Y') }}</p>
+                        </div>
+                        <div class="relative">
+                            <button onclick="toggleActionMenu(event, 'invoice-mobile-{{ invoice.id }}')" class="inline-flex items-center px-2 py-1 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                            </button>
+                            <div id="invoice-mobile-{{ invoice.id }}" class="action-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <div class="py-1">
+                                    <button onclick="openEditModal({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        Edit
+                                    </button>
+                                    <a href="/api/quotation/{{ invoice.id }}/pdf" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                        View PDF
+                                    </a>
+                                    <button onclick="shareOnWhatsApp({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                                        </svg>
+                                        Share on WhatsApp
+                                    </button>
+                                    <button onclick="duplicateDocument({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                        Duplicate
+                                    </button>
+                                    {% if not invoice.voided %}
+                                    <button onclick="voidInvoice({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                        </svg>
+                                        Void Invoice
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-100">
+                        <p class="text-xs text-gray-600 mb-1"><span class="font-medium">Bill To:</span> {{ invoice.to_address.split('\n')[0] if invoice.to_address else 'N/A' }}</p>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm font-semibold text-gray-900"><span class="font-medium">Total:</span> {{ invoice.currency }} {{ invoice.total_amount }}</p>
+                            <span class="px-2 py-1 text-xs font-semibold rounded {% if invoice.payment_status == 'paid' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {{ invoice.payment_status|upper }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
             <!-- Pagination -->
             <div class="mt-6 flex justify-between items-center">
                 <div class="text-sm text-gray-600">
@@ -406,7 +596,7 @@
             const searchInput = document.getElementById(`search${type.charAt(0).toUpperCase() + type.slice(1)}`);
             const monthFilter = document.getElementById(`monthFilter${type.charAt(0).toUpperCase() + type.slice(1)}`);
             const table = document.getElementById(`${type}Table`);
-            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            const mobileContainer = document.getElementById(`${type}TableMobile`);
             
             const searchTerm = searchInput.value.toLowerCase();
             const selectedMonth = monthFilter.value;
@@ -418,26 +608,55 @@
                 selectedPaymentStatus = paymentStatusFilter ? paymentStatusFilter.value : '';
             }
             
-            // First, filter all rows
+            // Filter desktop table rows
             let visibleRows = [];
-            for (let row of rows) {
-                const searchData = row.getAttribute('data-search');
-                const dateData = row.getAttribute('data-date');
-                
-                const matchesSearch = !searchTerm || searchData.includes(searchTerm);
-                const matchesMonth = !selectedMonth || dateData === selectedMonth;
-                
-                // Check payment status for invoices
-                let matchesPaymentStatus = true;
-                if (type === 'invoices' && selectedPaymentStatus) {
-                    const paymentStatus = row.getAttribute('data-payment-status');
-                    matchesPaymentStatus = paymentStatus === selectedPaymentStatus;
+            if (table) {
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                for (let row of rows) {
+                    const searchData = row.getAttribute('data-search');
+                    const dateData = row.getAttribute('data-date');
+                    
+                    const matchesSearch = !searchTerm || searchData.includes(searchTerm);
+                    const matchesMonth = !selectedMonth || dateData === selectedMonth;
+                    
+                    // Check payment status for invoices
+                    let matchesPaymentStatus = true;
+                    if (type === 'invoices' && selectedPaymentStatus) {
+                        const paymentStatus = row.getAttribute('data-payment-status');
+                        matchesPaymentStatus = paymentStatus === selectedPaymentStatus;
+                    }
+                    
+                    if (matchesSearch && matchesMonth && matchesPaymentStatus) {
+                        visibleRows.push(row);
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
                 }
-                
-                if (matchesSearch && matchesMonth && matchesPaymentStatus) {
-                    visibleRows.push(row);
-                } else {
-                    row.style.display = 'none';
+            }
+            
+            // Filter mobile cards
+            if (mobileContainer) {
+                const cards = mobileContainer.getElementsByTagName('div');
+                for (let card of cards) {
+                    const searchData = card.getAttribute('data-search');
+                    const dateData = card.getAttribute('data-date');
+                    
+                    const matchesSearch = !searchTerm || searchData.includes(searchTerm);
+                    const matchesMonth = !selectedMonth || dateData === selectedMonth;
+                    
+                    // Check payment status for invoices
+                    let matchesPaymentStatus = true;
+                    if (type === 'invoices' && selectedPaymentStatus) {
+                        const paymentStatus = card.getAttribute('data-payment-status');
+                        matchesPaymentStatus = paymentStatus === selectedPaymentStatus;
+                    }
+                    
+                    if (matchesSearch && matchesMonth && matchesPaymentStatus) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
                 }
             }
             
@@ -448,8 +667,10 @@
                 currentPageInvoices = 1;
             }
             
-            // Apply pagination
-            paginateTable(type, visibleRows);
+            // Apply pagination (only for desktop table)
+            if (table && visibleRows.length > 0) {
+                paginateTable(type, visibleRows);
+            }
         }
         
         function paginateTable(type, visibleRows) {
@@ -776,27 +997,33 @@
                     <div class="grid grid-cols-3 gap-3">
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-semibold text-sm">Bank Name</span></label>
-                            <input type="text" id="bank_name" class="input input-bordered input-sm" placeholder="Canara Bank">
+                            <input type="text" id="bank_name" class="input input-bordered input-sm" placeholder="Canara Bank"
+                                   value="{{ current_user.bank_name or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-semibold text-sm">Branch</span></label>
-                            <input type="text" id="branch_name" class="input input-bordered input-sm" placeholder="Branch Name">
+                            <input type="text" id="branch_name" class="input input-bordered input-sm" placeholder="Branch Name"
+                                   value="{{ current_user.branch_name or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-semibold text-sm">Account Name</span></label>
-                            <input type="text" id="account_name" class="input input-bordered input-sm" placeholder="Account Holder">
+                            <input type="text" id="account_name" class="input input-bordered input-sm" placeholder="Account Holder"
+                                   value="{{ current_user.account_name or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-semibold text-sm">Account No</span></label>
-                            <input type="text" id="account_number" class="input input-bordered input-sm" placeholder="1234567890">
+                            <input type="text" id="account_number" class="input input-bordered input-sm" placeholder="1234567890"
+                                   value="{{ current_user.account_number or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-semibold text-sm">IFSC Code</span></label>
-                            <input type="text" id="ifsc_code" class="input input-bordered input-sm" placeholder="IFSC Code">
+                            <input type="text" id="ifsc_code" class="input input-bordered input-sm" placeholder="IFSC Code"
+                                   value="{{ current_user.ifsc_code or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-1"><span class="label-text font-semibold text-sm">Gpay / PhonePe</span></label>
-                            <input type="text" id="gpay_phonepe" class="input input-bordered input-sm" placeholder="+91 9994164140">
+                            <input type="text" id="gpay_phonepe" class="input input-bordered input-sm" placeholder="+91 9994164140"
+                                   value="{{ current_user.gpay_phonepe or '' }}">
                         </div>
                     </div>
                 </div>

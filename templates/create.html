@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if edit_mode %}Edit{% else %}Create{% endif %} Invoice - Remnow</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
-        .form-container { height: calc(100vh - 64px); overflow-y: auto; padding: 24px; }
+        .form-container { height: calc(100vh - 64px); overflow-y: auto; padding: 16px 12px; }
+        @media (min-width: 640px) {
+            .form-container { padding: 24px; }
+        }
         .tab.tab-active {
             color: #2563eb !important;
             border-bottom-color: #2563eb !important;
@@ -25,57 +33,98 @@
     <div class="navbar bg-base-100 shadow-lg">
         <div class="flex-1">
             <a href="/" class="btn btn-ghost normal-case text-xl">
-                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-8 mr-2">
+                <img src="{{ url_for('static', filename='logo-Remnow.png') }}" alt="Remnow Logo" class="h-6 sm:h-8 mr-2">
             </a>
         </div>
-        <div class="flex-none gap-2">
-            <!-- Navigation Tabs -->
-            <div class="tabs">
+        <div class="flex-none gap-1 sm:gap-2">
+            <!-- Mobile Menu Button -->
+            <div class="dropdown dropdown-end lg:hidden">
+                <label tabindex="0" class="btn btn-ghost btn-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </label>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a href="/?tab=quotations" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Quotations
+                    </a></li>
+                    <li><a href="/?tab=invoices" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
+                        </svg>
+                        Invoices
+                    </a></li>
+                    <li><a href="/settings" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Settings
+                    </a></li>
+                </ul>
+            </div>
+            
+            <!-- Desktop Navigation Tabs -->
+            <div class="tabs hidden lg:flex">
                 <a href="/?tab=quotations" class="tab tab-lifted">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Quotations
+                    <span class="hidden xl:inline">Quotations</span>
                 </a>
                 <a href="/?tab=invoices" class="tab tab-lifted">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
                     </svg>
-                    Invoices
+                    <span class="hidden xl:inline">Invoices</span>
                 </a>
                 <a href="/settings" class="tab tab-lifted">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    Settings
+                    <span class="hidden xl:inline">Settings</span>
                 </a>
             </div>
-            <button onclick="saveQuotation()" class="btn btn-sm" style="background-color: #2563eb; color: white;">
+            <button onclick="saveQuotation()" class="btn btn-sm hidden sm:flex" style="background-color: #2563eb; color: white;">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                 </svg>
-                {% if edit_mode %}Update{% else %}Save{% endif %} & Generate PDF
+                <span class="hidden md:inline">{% if edit_mode %}Update{% else %}Save{% endif %} & Generate PDF</span>
             </button>
-            <a href="/" class="btn btn-ghost btn-sm">Cancel</a>
+            <a href="/" class="btn btn-ghost btn-sm hidden sm:flex">Cancel</a>
         </div>
+    </div>
+    
+    <!-- Mobile Action Buttons -->
+    <div class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex gap-2 z-50 shadow-lg">
+        <button onclick="saveQuotation()" class="btn btn-sm flex-1" style="background-color: #2563eb; color: white;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            {% if edit_mode %}Update{% else %}Save{% endif %}
+        </button>
+        <a href="/" class="btn btn-ghost btn-sm">Cancel</a>
     </div>
 
     <!-- Form Container -->
-    <div style="height: calc(100vh - 64px);">
+    <div style="height: calc(100vh - 64px); padding-bottom: 80px;" class="sm:pb-0">
         <!-- FORM -->
         <div class="bg-base-100 form-container" style="max-width: 1200px; margin: 0 auto;">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">{% if edit_mode %}Edit{% else %}Create{% endif %} Document</h2>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-sm" id="quotationBtn" onclick="setDocumentType('quotation')" style="background-color: #6366f1; color: white;">Quotation</button>
-                    <button type="button" class="btn btn-sm btn-active" id="invoiceBtn" onclick="setDocumentType('invoice')" style="background-color: #6366f1; color: white;">Invoice</button>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3">
+                <h2 class="text-xl sm:text-2xl font-bold">{% if edit_mode %}Edit{% else %}Create{% endif %} Document</h2>
+                <div class="btn-group w-full sm:w-auto">
+                    <button type="button" class="btn btn-sm flex-1 sm:flex-none" id="quotationBtn" onclick="setDocumentType('quotation')" style="background-color: #6366f1; color: white;">Quotation</button>
+                    <button type="button" class="btn btn-sm btn-active flex-1 sm:flex-none" id="invoiceBtn" onclick="setDocumentType('invoice')" style="background-color: #6366f1; color: white;">Invoice</button>
                 </div>
             </div>
             
-            <form id="quotationForm" class="space-y-6">
+            <form id="quotationForm" class="space-y-4 sm:space-y-6">
                 <!-- Basic Info -->
-                <div class="grid grid-cols-4 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div class="form-control">
                         <label class="label py-1"><span class="label-text font-semibold text-sm" id="invoiceNoLabel">Invoice Number</span></label>
                         <input type="text" id="quotation_no" class="input input-bordered input-sm" placeholder="INV/25-26/001" required>
@@ -105,8 +154,8 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-4 gap-3">
-                    <div class="form-control">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="form-control sm:col-span-2 lg:col-span-1">
                         <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Name)</span></label>
                         <input type="text" id="client_name" class="input input-bordered input-sm" placeholder="Client Name" required>
                     </div>
@@ -137,8 +186,8 @@
                         </button>
                     </div>
                     
-                    <div class="border border-gray-300" style="border-radius: 0;">
-                        <table class="w-full text-xs" style="border-radius: 0; border-collapse: collapse;">
+                    <div class="border border-gray-300 overflow-x-auto" style="border-radius: 0;">
+                        <table class="w-full text-xs min-w-[600px]" style="border-radius: 0; border-collapse: collapse;">
                             <thead>
                                 <tr class="bg-gray-100 border-b border-gray-300">
                                     <th class="px-2 py-2 text-left font-semibold w-8">#</th>
@@ -161,30 +210,36 @@
                 <div id="paymentSection">
                     <div class="divider my-4">Payment Information</div>
                     
-                    <div class="grid grid-cols-4 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
                         <div class="form-control">
                             <label class="label py-0"><span class="label-text text-xs">Bank Name</span></label>
-                            <input type="text" id="bank_name" class="input input-bordered input-xs" placeholder="Canara Bank">
+                            <input type="text" id="bank_name" class="input input-bordered input-xs" placeholder="Canara Bank"
+                                   value="{{ current_user.bank_name or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-0"><span class="label-text text-xs">Branch</span></label>
-                            <input type="text" id="branch_name" class="input input-bordered input-xs" placeholder="Branch Name">
+                            <input type="text" id="branch_name" class="input input-bordered input-xs" placeholder="Branch Name"
+                                   value="{{ current_user.branch_name or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-0"><span class="label-text text-xs">Account Name</span></label>
-                            <input type="text" id="account_name" class="input input-bordered input-xs" placeholder="Account Holder">
+                            <input type="text" id="account_name" class="input input-bordered input-xs" placeholder="Account Holder"
+                                   value="{{ current_user.account_name or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-0"><span class="label-text text-xs">Account No</span></label>
-                            <input type="text" id="account_number" class="input input-bordered input-xs" placeholder="1234567890">
+                            <input type="text" id="account_number" class="input input-bordered input-xs" placeholder="1234567890"
+                                   value="{{ current_user.account_number or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-0"><span class="label-text text-xs">IFSC Code</span></label>
-                            <input type="text" id="ifsc_code" class="input input-bordered input-xs" placeholder="IFSC Code">
+                            <input type="text" id="ifsc_code" class="input input-bordered input-xs" placeholder="IFSC Code"
+                                   value="{{ current_user.ifsc_code or '' }}">
                         </div>
                         <div class="form-control">
                             <label class="label py-0"><span class="label-text text-xs">Gpay / PhonePe</span></label>
-                            <input type="text" id="gpay_phonepe" class="input input-bordered input-xs" placeholder="+91 9994164140">
+                            <input type="text" id="gpay_phonepe" class="input input-bordered input-xs" placeholder="+91 9994164140"
+                                   value="{{ current_user.gpay_phonepe or '' }}">
                         </div>
                     </div>
                 </div>
@@ -223,6 +278,10 @@
                 document.getElementById('paymentSection').style.display = 'block';
                 document.getElementById('invoiceNoLabel').textContent = 'Invoice Number';
                 document.getElementById('quotation_no').placeholder = 'INV/25-26/001';
+                // Ensure payment info is loaded when switching to Invoice for new documents
+                if (!editMode) {
+                    loadPaymentInfo();
+                }
             }
         }
 
@@ -361,6 +420,41 @@
             // Add one empty item for new documents
             addItem();
         }
+
+        async function loadPaymentInfo() {
+            console.log('Loading payment info...');
+            try {
+                const response = await fetch('/api/settings/payment-info');
+                console.log('Payment info response status:', response.status);
+                const data = await response.json();
+                console.log('Payment info data:', data);
+                
+                if (response.ok && data) {
+                    // Only update if not in edit mode (to avoid overriding existing document data)
+                    if (!editMode) {
+                        document.getElementById('bank_name').value = data.bank_name || '';
+                        document.getElementById('branch_name').value = data.branch_name || '';
+                        document.getElementById('account_name').value = data.account_name || '';
+                        document.getElementById('account_number').value = data.account_number || '';
+                        document.getElementById('ifsc_code').value = data.ifsc_code || '';
+                        document.getElementById('gpay_phonepe').value = data.gpay_phonepe || '';
+                        console.log('Payment info fields updated');
+                    }
+                } else {
+                    console.error('Failed to load payment info:', data);
+                }
+            } catch (error) {
+                console.error('Error loading payment info:', error);
+            }
+        }
+        
+        // Load payment info after page loads completely
+        window.addEventListener('load', function() {
+            if (!editMode) {
+                console.log('Page loaded, loading payment info for new document');
+                loadPaymentInfo();
+            }
+        });
         
         function loadQuotationData() {
             // Set document type first
