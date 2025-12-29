@@ -227,8 +227,30 @@ def index():
     all_records = Quotation.query.filter_by(user_id=current_user.id).order_by(Quotation.created_at.desc()).all()
     quotations = [q for q in all_records if q.document_type == 'quotation']
     invoices = [q for q in all_records if q.document_type == 'invoice']
+    items = Item.query.filter_by(user_id=current_user.id).order_by(Item.created_at.desc()).all()
     
-    return render_template('dashboard.html', quotations=quotations, invoices=invoices)
+    # Get unique months from quotations
+    quotation_months = set()
+    for q in quotations:
+        if q.date:
+            month_key = q.date.strftime('%Y-%m')
+            quotation_months.add((month_key, q.date.strftime('%B %Y')))
+    quotation_months = sorted(quotation_months, reverse=True)  # Most recent first
+    
+    # Get unique months from invoices
+    invoice_months = set()
+    for inv in invoices:
+        if inv.date:
+            month_key = inv.date.strftime('%Y-%m')
+            invoice_months.add((month_key, inv.date.strftime('%B %Y')))
+    invoice_months = sorted(invoice_months, reverse=True)  # Most recent first
+    
+    return render_template('dashboard.html', 
+                         quotations=quotations, 
+                         invoices=invoices, 
+                         items=items,
+                         quotation_months=quotation_months,
+                         invoice_months=invoice_months)
 
 @app.route('/create')
 @login_required
@@ -329,6 +351,34 @@ def payment_info():
         except Exception as e:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500
+
+@app.route('/api/profile/change-password', methods=['POST'])
+@login_required
+def change_password():
+    """Change user password"""
+    try:
+        data = request.json
+        current_password = data.get('current_password', '')
+        new_password = data.get('new_password', '')
+        
+        if not current_password or not new_password:
+            return jsonify({'error': 'Current password and new password are required'}), 400
+        
+        # Verify current password
+        if not current_user.check_password(current_password):
+            return jsonify({'error': 'Current password is incorrect'}), 400
+        
+        # Check password length
+        if len(new_password) < 6:
+            return jsonify({'error': 'New password must be at least 6 characters long'}), 400
+        
+        # Update password
+        current_user.set_password(new_password)
+        db.session.commit()
+        return jsonify({'message': 'Password changed successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/quotation', methods=['POST'])
 @login_required

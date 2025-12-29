@@ -19,12 +19,12 @@
             .form-container { padding: 24px; }
         }
         .tab.tab-active {
-            color: #2563eb !important;
-            border-bottom-color: #2563eb !important;
+            color: #6366f1 !important;
+            border-bottom-color: #6366f1 !important;
             font-weight: 600;
         }
         .tab.tab-active svg {
-            color: #2563eb !important;
+            color: #6366f1 !important;
         }
     </style>
 </head>
@@ -89,7 +89,7 @@
                     <span class="hidden xl:inline">Settings</span>
                 </a>
             </div>
-            <button onclick="saveQuotation()" class="btn btn-sm hidden sm:flex" style="background-color: #2563eb; color: white;">
+            <button onclick="saveQuotation()" class="btn btn-sm hidden sm:flex" style="background-color: #6366f1; color: white;">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                 </svg>
@@ -101,7 +101,7 @@
     
     <!-- Mobile Action Buttons -->
     <div class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 flex gap-2 z-50 shadow-lg">
-        <button onclick="saveQuotation()" class="btn btn-sm flex-1" style="background-color: #2563eb; color: white;">
+        <button onclick="saveQuotation()" class="btn btn-sm flex-1" style="background-color: #6366f1; color: white;">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
             </svg>
@@ -137,20 +137,26 @@
 
                     <div class="form-control">
                         <label class="label py-1"><span class="label-text font-semibold text-sm">Currency</span></label>
-                        <select id="currency" class="select select-bordered select-sm">
-                            <option value="USD">USD ($)</option>
-                            <option value="INR" selected>INR (₹)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                        </select>
+                        <div class="dropdown w-full">
+                            <label tabindex="0" class="btn btn-sm w-full justify-between" id="currencyLabel">INR (₹)</label>
+                            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-full z-[1]">
+                                <li><a onclick="selectCurrency('USD', 'USD ($)')">USD ($)</a></li>
+                                <li><a onclick="selectCurrency('INR', 'INR (₹)')">INR (₹)</a></li>
+                                <li><a onclick="selectCurrency('EUR', 'EUR (€)')">EUR (€)</a></li>
+                                <li><a onclick="selectCurrency('GBP', 'GBP (£)')">GBP (£)</a></li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-control">
                         <label class="label py-1"><span class="label-text font-semibold text-sm">Payment Status</span></label>
-                        <select id="payment_status" class="select select-bordered select-sm">
-                            <option value="unpaid" selected>Unpaid</option>
-                            <option value="paid">Paid</option>
-                        </select>
+                        <div class="dropdown w-full">
+                            <label tabindex="0" class="btn btn-sm w-full justify-between" id="paymentStatusLabel">Unpaid</label>
+                            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-full z-[1]">
+                                <li><a onclick="selectPaymentStatus('unpaid', 'Unpaid')">Unpaid</a></li>
+                                <li><a onclick="selectPaymentStatus('paid', 'Paid')">Paid</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -178,7 +184,7 @@
                 <div class="mt-4">
                     <div class="flex justify-between items-center mb-2">
                         <label class="label-text font-semibold text-sm">Items</label>
-                        <button type="button" onclick="addItem()" class="btn btn-xs" style="background-color: #10b981; color: white;">
+                        <button type="button" onclick="addItem()" class="btn btn-xs" style="background-color: #6366f1; color: white;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
@@ -251,12 +257,79 @@
         let items = [];
         let itemCounter = 0;
         let documentType = 'invoice'; // 'quotation' or 'invoice'
+        let selectedCurrency = 'INR';
+        let selectedPaymentStatus = 'unpaid';
+
+        // Dropdown selection handlers
+        function selectCurrency(value, label) {
+            selectedCurrency = value;
+            document.getElementById('currencyLabel').textContent = label;
+            const currencyLabel = document.getElementById('currencyLabel');
+            if (currencyLabel) {
+                const dropdown = currencyLabel.closest('.dropdown');
+                if (dropdown) {
+                    const menu = dropdown.querySelector('ul[tabindex="0"]');
+                    currencyLabel.blur();
+                    if (menu) menu.blur();
+                }
+            }
+            handleCurrencyChange();
+        }
+
+        function selectPaymentStatus(value, label) {
+            selectedPaymentStatus = value;
+            document.getElementById('paymentStatusLabel').textContent = label;
+            const paymentStatusLabel = document.getElementById('paymentStatusLabel');
+            if (paymentStatusLabel) {
+                const dropdown = paymentStatusLabel.closest('.dropdown');
+                if (dropdown) {
+                    const menu = dropdown.querySelector('ul[tabindex="0"]');
+                    paymentStatusLabel.blur();
+                    if (menu) menu.blur();
+                }
+            }
+        }
+
+        function handleCurrencyChange() {
+            const currency = selectedCurrency;
+            const gstTypeSection = document.getElementById('gstTypeSection');
+            const gstFieldsSection = document.getElementById('gstFieldsSection');
+            
+            if (gstTypeSection && gstFieldsSection) {
+                if (currency === 'INR') {
+                    gstTypeSection.style.display = 'block';
+                    gstFieldsSection.style.display = 'block';
+                    handleGstTypeChange();
+                } else {
+                    gstTypeSection.style.display = 'none';
+                    gstFieldsSection.style.display = 'none';
+                }
+            }
+        }
+
+        function handleGstTypeChange() {
+            const gstType = document.querySelector('input[name="gst_type"]:checked')?.value || 'intrastate';
+            const intrastateFields = document.getElementById('intrastateGstFields');
+            const interstateFields = document.getElementById('interstateGstFields');
+            
+            if (intrastateFields && interstateFields) {
+                if (gstType === 'intrastate') {
+                    intrastateFields.style.display = 'block';
+                    interstateFields.style.display = 'none';
+                } else {
+                    intrastateFields.style.display = 'none';
+                    interstateFields.style.display = 'block';
+                }
+            }
+        }
         
-        // Edit mode variables
-        const editMode = {{ 'true' if edit_mode else 'false' }};
-        const quotationId = {{ quotation.id if edit_mode else 'null' }};
+        // Edit mode variables - populated by Flask template rendering
+        const editMode = {% if edit_mode %}true{% else %}false{% endif %};
+        const quotationId = {% if edit_mode %}{{ quotation.id }}{% else %}null{% endif %};
         {% if edit_mode %}
-        const quotationData = {{ quotation.to_dict()|tojson }};
+        const quotationData = {{ quotation.to_dict()|tojson|safe }};
+        {% else %}
+        const quotationData = null;
         {% endif %}
 
         // Set today's date
@@ -313,24 +386,24 @@
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                     <td class="px-2 py-2 text-center">${index + 1}</td>
                     <td class="px-2 py-2">
-                        <input type="text" placeholder="Service description" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
-                           value="${item.description}" oninput="updateItem(${item.id}, 'description', this.value)">
+                        <input type="text" placeholder="Service description" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" 
+                           value="${item.description}" oninput="updateItem(${item.id}, 'description', this.value)" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''">
                     </td>
                     <td class="px-2 py-2">
-                        <input type="text" placeholder="HSN" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
-                           value="${item.hsn_code}" oninput="updateItem(${item.id}, 'hsn_code', this.value)">
+                        <input type="text" placeholder="HSN" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" 
+                           value="${item.hsn_code}" oninput="updateItem(${item.id}, 'hsn_code', this.value)" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''">
                     </td>
                     <td class="px-2 py-2">
-                        <input type="text" placeholder="Sep 2025" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
-                           value="${item.month}" oninput="updateItem(${item.id}, 'month', this.value)">
+                        <input type="text" placeholder="Sep 2025" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" 
+                           value="${item.month}" oninput="updateItem(${item.id}, 'month', this.value)" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''">
                     </td>
                     <td class="px-2 py-2">
-                        <input type="number" placeholder="0" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
-                           value="${item.rate}" oninput="updateItem(${item.id}, 'rate', this.value)">
+                        <input type="number" placeholder="0" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" 
+                           value="${item.rate}" oninput="updateItem(${item.id}, 'rate', this.value)" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''">
                     </td>
                     <td class="px-2 py-2">
-                        <input type="number" placeholder="0.00" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
-                           value="${item.amount}" oninput="updateItem(${item.id}, 'amount', this.value)">
+                        <input type="number" placeholder="0.00" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" 
+                           value="${item.amount}" oninput="updateItem(${item.id}, 'amount', this.value)" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''">
                     </td>
                     <td class="px-2 py-2 text-center">
                         <button type="button" onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700 font-bold">×</button>
@@ -366,9 +439,9 @@
                 date: document.getElementById('date').value,
                 to_address: toAddress,
                 client_phone: clientPhone,
-                currency: document.getElementById('currency').value,
+                currency: selectedCurrency,
                 document_type: documentType,
-                payment_status: document.getElementById('payment_status').value,
+                payment_status: selectedPaymentStatus,
                 bank_name: document.getElementById('bank_name').value,
                 branch_name: document.getElementById('branch_name').value,
                 account_name: document.getElementById('account_name').value,
@@ -472,8 +545,12 @@
             document.getElementById('client_name').value = clientName;
             document.getElementById('client_address').value = clientAddress;
             document.getElementById('client_phone').value = quotationData.client_phone || '';
-            document.getElementById('currency').value = quotationData.currency;
-            document.getElementById('payment_status').value = quotationData.payment_status || 'unpaid';
+            selectedCurrency = quotationData.currency;
+            const currencyLabels = {'USD': 'USD ($)', 'INR': 'INR (₹)', 'EUR': 'EUR (€)', 'GBP': 'GBP (£)'};
+            document.getElementById('currencyLabel').textContent = currencyLabels[quotationData.currency] || 'INR (₹)';
+            selectedPaymentStatus = quotationData.payment_status || 'unpaid';
+            document.getElementById('paymentStatusLabel').textContent = (quotationData.payment_status || 'unpaid').charAt(0).toUpperCase() + (quotationData.payment_status || 'unpaid').slice(1);
+            handleCurrencyChange();
             document.getElementById('bank_name').value = quotationData.bank_name || '';
             document.getElementById('branch_name').value = quotationData.branch_name || '';
             document.getElementById('account_name').value = quotationData.account_name || '';
@@ -496,6 +573,15 @@
             });
             renderItems();
         }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown label[tabindex="0"]').forEach(label => {
+                    label.blur();
+                });
+            }
+        });
     </script>
 </body>
 </html>

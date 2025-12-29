@@ -11,7 +11,108 @@
     <link rel="manifest" href="{{ url_for('static', filename='favicon/site.webmanifest') }}">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
+        /* Modern primary color - Indigo */
+        :root {
+            --p: 239 84% 67%;
+        }
+        .btn-primary {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+            color: white !important;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+        }
+        .btn-primary:focus {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+        }
+        .btn-primary:active {
+            background-color: #4338ca !important;
+            border-color: #4338ca !important;
+        }
+        .radio-primary:checked {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+        }
+        .checkbox-primary:checked {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+        }
+        .input-primary:focus {
+            border-color: #6366f1 !important;
+            outline-color: #6366f1 !important;
+        }
+        .select-primary:focus {
+            border-color: #6366f1 !important;
+            outline-color: #6366f1 !important;
+        }
+        .text-primary {
+            color: #6366f1 !important;
+        }
+        .bg-primary {
+            background-color: #6366f1 !important;
+        }
+        .border-primary {
+            border-color: #6366f1 !important;
+        }
+        .hover\:bg-primary:hover {
+            background-color: #6366f1 !important;
+        }
+        .hover\:text-primary:hover {
+            color: #6366f1 !important;
+        }
+        /* Compact design - reduce sizes throughout */
+        body {
+            font-size: 14px;
+        }
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.25rem; }
+        h3 { font-size: 1.1rem; }
+        .btn { 
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .btn-sm { 
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8125rem;
+        }
+        .btn-xs { 
+            padding: 0.125rem 0.375rem;
+            font-size: 0.75rem;
+        }
+        .input, .select, .textarea {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .input-sm, .select-sm, .textarea-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8125rem;
+        }
+        .input-xs, .select-xs {
+            padding: 0.125rem 0.375rem;
+            font-size: 0.75rem;
+        }
+        table th, table td {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .card, .bg-white {
+            padding: 0.75rem;
+        }
         .tab-content {
             display: block;
         }
@@ -19,12 +120,12 @@
             display: none !important;
         }
         .tab.tab-active {
-            color: #2563eb !important;
-            border-bottom-color: #2563eb !important;
+            color: #6366f1 !important;
+            border-bottom-color: #6366f1 !important;
             font-weight: 600;
         }
         .tab.tab-active svg {
-            color: #2563eb !important;
+            color: #6366f1 !important;
         }
         .voided-invoice {
             background-color: #fee2e2 !important;
@@ -34,17 +135,104 @@
         .voided-invoice:hover {
             background-color: #fecaca !important;
         }
+        /* Ensure navbar and all containers allow dropdowns to extend outside */
+        body {
+            overflow-x: hidden;
+        }
+        /* Reduce spacing throughout */
+        .py-4 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .py-6 { padding-top: 1rem; padding-bottom: 1rem; }
+        .mb-4 { margin-bottom: 0.75rem; }
+        .mb-6 { margin-bottom: 1rem; }
+        .mt-4 { margin-top: 0.75rem; }
+        .mt-6 { margin-top: 1rem; }
+        .gap-3 { gap: 0.5rem; }
+        .gap-4 { gap: 0.75rem; }
+        .space-y-3 > * + * { margin-top: 0.5rem; }
+        .space-y-4 > * + * { margin-top: 0.75rem; }
+        .space-y-6 > * + * { margin-top: 1rem; }
+        /* Modern primary color for all buttons and UI elements */
+        .btn-primary {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+            color: white !important;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+        }
+        .btn-primary:focus {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+        }
+        .btn-primary:active {
+            background-color: #4338ca !important;
+            border-color: #4338ca !important;
+        }
+        .radio-primary:checked {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+        }
+        .checkbox-primary:checked {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+        }
+        /* Override all button colors to use modern primary */
+        button[style*="background-color: #10b981"],
+        button[style*="background-color: #059669"],
+        button[style*="background-color: #2563eb"],
+        button[style*="background-color: #1d4ed8"],
+        .bg-green-600,
+        .bg-green-700 {
+            background-color: #6366f1 !important;
+            border-color: #6366f1 !important;
+        }
+        button[style*="background-color: #2563eb"]:hover,
+        button[style*="background-color: #1d4ed8"]:hover,
+        .hover\:bg-green-700:hover {
+            background-color: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+        }
         .navbar {
+            overflow: visible !important;
+            position: relative;
+            z-index: 100;
+        }
+        /* Ensure dropdown containers can extend outside navbar */
+        .navbar > div {
+            overflow: visible !important;
+        }
+        .navbar .flex-none {
+            overflow: visible !important;
+            position: relative;
+        }
+        .navbar .relative {
+            overflow: visible !important;
+            position: relative;
+        }
+        /* Ensure profile menu can extend outside navbar */
+        #profileMenu {
+            position: absolute !important;
+            overflow: visible !important;
+            top: 100% !important;
+            margin-top: 0.75rem !important;
+        }
+        /* Ensure mobile menu can also extend outside */
+        #mobileMenu {
+            position: absolute !important;
+            overflow: visible !important;
+            top: 100% !important;
+            margin-top: 0.75rem !important;
+        }
+        /* Apply horizontal scroll only to tabs container if needed */
+        .navbar .tabs {
             overflow-x: auto;
-            overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
-        }
-        .navbar::-webkit-scrollbar {
-            display: none;
-        }
-        .navbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+        .navbar .tabs::-webkit-scrollbar {
+            display: none;
         }
         @media (max-width: 1279px) {
             .navbar .tabs {
@@ -63,39 +251,32 @@
         </div>
         <div class="flex-none gap-0 sm:gap-1 lg:gap-2">
             <!-- Mobile Menu Button -->
-            <div class="dropdown dropdown-end xl:hidden">
-                <label tabindex="0" class="btn btn-ghost btn-circle btn-sm sm:btn-md">
+            <div class="relative xl:hidden">
+                <button onclick="toggleMobileMenu()" class="btn btn-ghost btn-circle btn-sm sm:btn-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
-                </label>
-                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 right-0">
-                    <li><a onclick="showTab('quotations')" class="flex items-center gap-2">
+                </button>
+                <ul id="mobileMenu" class="hidden absolute right-0 mt-3 menu menu-sm bg-base-100 rounded-box w-52 p-2 shadow-lg z-[9999]">
+                    <li><a onclick="showTab('quotations'); toggleMobileMenu();" class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         Quotations
                     </a></li>
-                    <li><a onclick="showTab('invoices')" class="flex items-center gap-2">
+                    <li><a onclick="showTab('invoices'); toggleMobileMenu();" class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
                         </svg>
                         Invoices
                     </a></li>
-                    <li><a href="/settings" class="flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        Settings
-                    </a></li>
-                    <li><a onclick="document.getElementById('createModal').showModal()" class="flex items-center gap-2">
+                    <li><a onclick="document.getElementById('createModal').showModal(); toggleMobileMenu();" class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
                         Create New
                     </a></li>
-                    <li><a onclick="document.getElementById('bulkExportModal').showModal()" class="flex items-center gap-2">
+                    <li><a onclick="document.getElementById('bulkExportModal').showModal(); toggleMobileMenu();" class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
@@ -118,13 +299,6 @@
                     </svg>
                     Invoices
                 </a>
-                <a href="/settings" class="tab tab-lifted text-xs sm:text-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Settings
-                </a>
             </div>
             <button onclick="document.getElementById('createModal').showModal()" class="btn btn-primary btn-xs sm:btn-sm hidden xl:flex">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -138,49 +312,73 @@
                 </svg>
                 <span class="hidden 2xl:inline">Bulk Export</span>
             </button>
-            <div class="dropdown dropdown-end">
-                <label tabindex="0" class="btn btn-ghost btn-circle avatar placeholder btn-sm sm:btn-md">
+            <div class="relative">
+                <button onclick="toggleProfileMenu()" class="btn btn-ghost btn-circle avatar placeholder btn-sm sm:btn-md">
                     <div class="bg-neutral-focus text-neutral-content rounded-full w-7 h-7 sm:w-10 sm:h-10">
                         <span class="text-sm sm:text-xl">{{ current_user.name[0].upper() }}</span>
                     </div>
-                </label>
-                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                </button>
+                <ul id="profileMenu" class="hidden absolute right-0 mt-3 menu menu-sm bg-base-100 rounded-box w-52 p-2 shadow-lg z-[9999]">
                     <li class="menu-title">
                         <span>{{ current_user.name }}</span>
                         <span class="text-xs">{{ current_user.email }}</span>
                     </li>
-                    <li><a href="/logout">Logout</a></li>
+                    <li><a onclick="showTab('profile'); toggleProfileMenu();" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Profile
+                    </a></li>
+                    <li><a onclick="showTab('settings'); toggleProfileMenu();" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Settings
+                    </a></li>
+                    <li><a href="/logout" class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Logout
+                    </a></li>
                 </ul>
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 py-2 sm:py-3">
 
         <!-- Quotations Tab Content -->
         <div id="quotationsContent" class="tab-content">
-            <div class="border-b border-gray-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
+            <div class="border-b border-gray-200 pb-2 mb-3">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Quotations</h2>
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Quotations</h2>
                     <div class="text-xs sm:text-sm font-medium text-gray-600">{{ quotations|length }} Total</div>
                 </div>
             </div>
             
             <!-- Search and Filter Section -->
-            <div class="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+            <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
                 <div class="flex-1 w-full sm:min-w-[200px]">
-                    <input type="text" id="searchQuotations" placeholder="Search by quotation no, client name..." class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base" onkeyup="filterTable('quotations')">
+                    <input type="text" id="searchQuotations" placeholder="Search by quotation no, client name..." class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-sm sm:text-base" style="--tw-ring-color: #6366f1;" onkeyup="filterTable('quotations')" onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 2px rgba(99, 102, 241, 0.2)'" onblur="this.style.borderColor=''; this.style.boxShadow=''">
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <select id="monthFilterQuotations" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base" onchange="filterTable('quotations')">
-                        <option value="">All Months</option>
-                        <option value="2025-12">December 2025</option>
-                        <option value="2025-11">November 2025</option>
-                        <option value="2025-10">October 2025</option>
-                        <option value="2025-09">September 2025</option>
-                        <option value="2025-08">August 2025</option>
-                    </select>
+                    <div class="dropdown">
+                        <label tabindex="0" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base cursor-pointer flex items-center justify-between bg-white" id="monthFilterQuotationsLabel">
+                            <span>All Months</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[1]" id="monthFilterQuotations">
+                            <li><a onclick="selectMonthFilter('quotations', '', 'All Months')">All Months</a></li>
+                            {% for month_key, month_label in quotation_months %}
+                            <li><a onclick="selectMonthFilter('quotations', '{{ month_key }}', '{{ month_label }}')">{{ month_label }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                     <button class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base" onclick="resetFilters('quotations')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -237,7 +435,7 @@
                                                 </svg>
                                                 Share on WhatsApp
                                             </button>
-                                            <button onclick="duplicateDocument({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 flex items-center gap-2">
+                                            <button onclick="duplicateDocument({{ quotation.id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2" style="color: #6366f1;">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                                 </svg>
@@ -313,7 +511,7 @@
                 </div>
                 <div class="flex gap-2" id="quotationsPagination">
                     <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Previous</button>
-                    <button class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+                    <button class="px-3 py-1 text-white rounded" style="background-color: #2563eb;">1</button>
                     <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next</button>
                 </div>
             </div>
@@ -324,39 +522,53 @@
                 </svg>
                 <h3 class="text-lg font-medium text-gray-700 mb-2">No Quotations Yet</h3>
                 <p class="text-gray-500 mb-4">Create your first quotation to get started</p>
-                <button onclick="document.getElementById('createModal').showModal()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded transition-colors">Create Quotation</button>
+                <button onclick="document.getElementById('createModal').showModal()" class="inline-flex items-center px-4 py-2 text-white font-medium rounded transition-colors" style="background-color: #6366f1;" onmouseover="this.style.backgroundColor='#4f46e5'" onmouseout="this.style.backgroundColor='#6366f1'">Create Quotation</button>
             </div>
             {% endif %}
         </div>
 
         <!-- Invoices Tab Content -->
         <div id="invoicesContent" class="tab-content hidden">
-            <div class="border-b border-gray-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
+            <div class="border-b border-gray-200 pb-2 mb-3">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Invoices</h2>
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Invoices</h2>
                     <div class="text-xs sm:text-sm font-medium text-gray-600">{{ invoices|length }} Total</div>
                 </div>
             </div>
             
             <!-- Search and Filter Section -->
-            <div class="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+            <div class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
                 <div class="flex-1 w-full sm:min-w-[200px]">
-                    <input type="text" id="searchInvoices" placeholder="Search by invoice no, client name..." class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base" onkeyup="filterTable('invoices')">
+                    <input type="text" id="searchInvoices" placeholder="Search by invoice no, client name..." class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-sm sm:text-base" style="--tw-ring-color: #6366f1;" onkeyup="filterTable('invoices')" onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 2px rgba(99, 102, 241, 0.2)'" onblur="this.style.borderColor=''; this.style.boxShadow=''">
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <select id="monthFilterInvoices" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base" onchange="filterTable('invoices')">
-                        <option value="">All Months</option>
-                        <option value="2025-12">December 2025</option>
-                        <option value="2025-11">November 2025</option>
-                        <option value="2025-10">October 2025</option>
-                        <option value="2025-09">September 2025</option>
-                        <option value="2025-08">August 2025</option>
-                    </select>
-                    <select id="paymentStatusFilterInvoices" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base" onchange="filterTable('invoices')">
-                        <option value="">All Status</option>
-                        <option value="paid">Paid</option>
-                        <option value="unpaid">Unpaid</option>
-                    </select>
+                    <div class="dropdown">
+                        <label tabindex="0" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base cursor-pointer flex items-center justify-between bg-white" id="monthFilterInvoicesLabel">
+                            <span>All Months</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[1]" id="monthFilterInvoices">
+                            <li><a onclick="selectMonthFilter('invoices', '', 'All Months')">All Months</a></li>
+                            {% for month_key, month_label in invoice_months %}
+                            <li><a onclick="selectMonthFilter('invoices', '{{ month_key }}', '{{ month_label }}')">{{ month_label }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <label tabindex="0" class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base cursor-pointer flex items-center justify-between bg-white" id="paymentStatusFilterInvoicesLabel">
+                            <span>All Status</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[1]" id="paymentStatusFilterInvoices">
+                            <li><a onclick="selectPaymentStatusFilter('', 'All Status')">All Status</a></li>
+                            <li><a onclick="selectPaymentStatusFilter('paid', 'Paid')">Paid</a></li>
+                            <li><a onclick="selectPaymentStatusFilter('unpaid', 'Unpaid')">Unpaid</a></li>
+                        </ul>
+                    </div>
                     <button class="w-full sm:w-auto px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base" onclick="resetFilters('invoices')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -424,7 +636,7 @@
                                                 </svg>
                                                 Share on WhatsApp
                                             </button>
-                                            <button onclick="duplicateDocument({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 flex items-center gap-2">
+                                            <button onclick="duplicateDocument({{ invoice.id }})" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2" style="color: #6366f1;">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                                 </svg>
@@ -525,7 +737,7 @@
                 </div>
                 <div class="flex gap-2" id="invoicesPagination">
                     <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Previous</button>
-                    <button class="px-3 py-1 bg-green-600 text-white rounded">1</button>
+                    <button class="px-3 py-1 text-white rounded" style="background-color: #2563eb;">1</button>
                     <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next</button>
                 </div>
             </div>
@@ -536,9 +748,226 @@
                 </svg>
                 <h3 class="text-lg font-medium text-gray-700 mb-2">No Invoices Yet</h3>
                 <p class="text-gray-500 mb-4">Create your first invoice to get started</p>
-                <button onclick="document.getElementById('createModal').showModal()" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded transition-colors">Create Invoice</button>
+                <button onclick="document.getElementById('createModal').showModal()" class="inline-flex items-center px-4 py-2 text-white font-medium rounded transition-colors" style="background-color: #6366f1;" onmouseover="this.style.backgroundColor='#4f46e5'" onmouseout="this.style.backgroundColor='#6366f1'">Create Invoice</button>
             </div>
             {% endif %}
+        </div>
+
+        <!-- Profile Tab Content -->
+        <div id="profileContent" class="tab-content hidden">
+            <div class="border-b border-gray-200 pb-2 mb-3">
+                <h2 class="text-base font-semibold text-gray-800">Profile</h2>
+                <p class="text-xs text-gray-600 mt-1">Manage your account settings</p>
+            </div>
+
+            <!-- Change Password Section -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-3 max-w-sm">
+                <h3 class="text-sm font-semibold mb-3">Change Password</h3>
+                <form id="changePasswordForm" class="space-y-3">
+                    <div class="form-control">
+                        <label class="label py-1">
+                            <span class="label-text text-xs font-semibold">Current Password</span>
+                        </label>
+                        <input type="password" id="currentPassword" class="input input-bordered input-sm" placeholder="Enter current password" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label py-1">
+                            <span class="label-text text-xs font-semibold">New Password</span>
+                        </label>
+                        <input type="password" id="newPassword" class="input input-bordered input-sm" placeholder="Enter new password" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label py-1">
+                            <span class="label-text text-xs font-semibold">Confirm New Password</span>
+                        </label>
+                        <input type="password" id="confirmPassword" class="input input-bordered input-sm" placeholder="Re-enter new password" required>
+                    </div>
+                    <div class="form-control mt-3">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Settings Tab Content -->
+        <div id="settingsContent" class="tab-content hidden">
+            <div class="border-b border-gray-200 pb-2 mb-3">
+                <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Settings</h2>
+                <p class="text-xs sm:text-sm text-gray-600 mt-1">Configure your invoice and quotation preferences</p>
+            </div>
+
+            <!-- Document Prefix Settings -->
+            <div class="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+                <h3 class="text-sm sm:text-base font-semibold mb-2 sm:mb-3">Document Number Prefixes</h3>
+                <form id="prefixForm" class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Quotation Prefix</span>
+                        </label>
+                        <input type="text" id="quotationPrefix" class="input input-bordered" placeholder="QUO/25-26/" value="{{ current_user.quotation_prefix or 'QUO/25-26/' }}" required>
+                        <label class="label">
+                            <span class="label-text-alt text-gray-500">e.g., QUO/25-26/ will generate QUO/25-26/001, QUO/25-26/002...</span>
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Invoice Prefix</span>
+                        </label>
+                        <input type="text" id="invoicePrefix" class="input input-bordered" placeholder="INV/25-26/" value="{{ current_user.invoice_prefix or 'INV/25-26/' }}" required>
+                        <label class="label">
+                            <span class="label-text-alt text-gray-500">e.g., INV/25-26/ will generate INV/25-26/001, INV/25-26/002...</span>
+                        </label>
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Save Prefixes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Payment Info Settings -->
+            <div class="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+                <h3 class="text-sm sm:text-base font-semibold mb-2 sm:mb-3">Payment Information</h3>
+                <p class="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">This information will be auto-populated when creating invoices or quotations</p>
+                <form id="paymentInfoForm" class="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Bank Name</span>
+                        </label>
+                        <input type="text" id="paymentBankName" class="input input-bordered" placeholder="e.g., Canara Bank" value="{{ current_user.bank_name or '' }}">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Branch</span>
+                        </label>
+                        <input type="text" id="paymentBranchName" class="input input-bordered" placeholder="e.g., Madurai Main Branch" value="{{ current_user.branch_name or '' }}">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Account Name</span>
+                        </label>
+                        <input type="text" id="paymentAccountName" class="input input-bordered" placeholder="Account Holder Name" value="{{ current_user.account_name or '' }}">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Account Number</span>
+                        </label>
+                        <input type="text" id="paymentAccountNumber" class="input input-bordered" placeholder="1234567890" value="{{ current_user.account_number or '' }}">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">IFSC Code</span>
+                        </label>
+                        <input type="text" id="paymentIfscCode" class="input input-bordered" placeholder="e.g., CNRB0001234" value="{{ current_user.ifsc_code or '' }}">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">GPay / PhonePe</span>
+                        </label>
+                        <input type="text" id="paymentGpayPhonepe" class="input input-bordered" placeholder="+91 9994164140" value="{{ current_user.gpay_phonepe or '' }}">
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Save Payment Info
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Items Management Section -->
+            <div class="border-b border-gray-200 pb-4 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800">Manage Items</h2>
+                <p class="text-sm text-gray-600 mt-1">Add reusable items that will appear in auto-suggest when creating invoices/quotations</p>
+            </div>
+
+            <!-- Add Item Form -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4">Add New Item</h3>
+                <form id="addItemForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="form-control md:col-span-2">
+                        <label class="label">
+                            <span class="label-text font-semibold">Description *</span>
+                        </label>
+                        <input type="text" id="itemDescription" class="input input-bordered" placeholder="e.g., Web Development Service" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">HSN Code</span>
+                        </label>
+                        <input type="text" id="itemHsn" class="input input-bordered" placeholder="e.g., 998314">
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Default Rate</span>
+                        </label>
+                        <input type="number" id="itemRate" class="input input-bordered" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="md:col-span-4">
+                        <button type="submit" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Item
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Items List -->
+            <div class="bg-white border border-gray-200 rounded-lg">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold">Saved Items ({{ items|length }})</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200 bg-gray-50">
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Description</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">HSN Code</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Default Rate</th>
+                                <th class="text-right py-3 px-4 font-semibold text-gray-700 text-sm">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody">
+                            {% if items %}
+                                {% for item in items %}
+                                <tr class="border-b border-gray-100 hover:bg-gray-50" data-item-id="{{ item.id }}">
+                                    <td class="py-3 px-4 text-gray-900">{{ item.description }}</td>
+                                    <td class="py-3 px-4 text-gray-600">{{ item.hsn_code or '-' }}</td>
+                                    <td class="py-3 px-4 text-gray-600">{{ item.default_rate or '-' }}</td>
+                                    <td class="py-3 px-4 text-right">
+                                        <button onclick="deleteItem({{ item.id }})" class="btn btn-sm btn-error btn-outline">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="py-8 text-center text-gray-500">
+                                        No items saved yet. Add your first item above.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -547,12 +976,54 @@
         let currentPageInvoices = 1;
         const itemsPerPage = 15;
 
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        // Toggle profile menu
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            // Close mobile menu if clicking outside
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                const mobileMenuContainer = mobileMenu.closest('.relative');
+                if (mobileMenuContainer && !mobileMenuContainer.contains(event.target)) {
+                    mobileMenu.classList.add('hidden');
+                }
+            }
+            
+            // Close profile menu if clicking outside
+            if (profileMenu && !profileMenu.classList.contains('hidden')) {
+                const profileMenuContainer = profileMenu.closest('.relative');
+                if (profileMenuContainer && !profileMenuContainer.contains(event.target)) {
+                    profileMenu.classList.add('hidden');
+                }
+            }
+        });
+
         // Initialize page - check if there's a tab parameter in URL
         window.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const tab = urlParams.get('tab');
             if (tab === 'invoices') {
                 showTab('invoices');
+            } else if (tab === 'settings') {
+                showTab('settings');
+            } else if (tab === 'profile') {
+                showTab('profile');
             } else {
                 showTab('quotations');
             }
@@ -576,29 +1047,136 @@
                 document.getElementById('quotationsContent').classList.remove('hidden');
                 const tab = document.getElementById('quotationsTab');
                 tab.classList.add('tab-active');
-                tab.style.color = '#2563eb';
-                tab.style.borderBottomColor = '#2563eb';
+                tab.style.color = '#6366f1';
+                tab.style.borderBottomColor = '#6366f1';
                 // Update URL without page reload
                 window.history.replaceState({}, '', '/?tab=quotations');
             } else if (tabName === 'invoices') {
                 document.getElementById('invoicesContent').classList.remove('hidden');
                 const tab = document.getElementById('invoicesTab');
                 tab.classList.add('tab-active');
-                tab.style.color = '#2563eb';
-                tab.style.borderBottomColor = '#2563eb';
+                tab.style.color = '#6366f1';
+                tab.style.borderBottomColor = '#6366f1';
                 // Update URL without page reload
                 window.history.replaceState({}, '', '/?tab=invoices');
+            } else if (tabName === 'settings') {
+                document.getElementById('settingsContent').classList.remove('hidden');
+                // Update URL without page reload
+                window.history.replaceState({}, '', '/?tab=settings');
+            } else if (tabName === 'profile') {
+                document.getElementById('profileContent').classList.remove('hidden');
+                // Update URL without page reload
+                window.history.replaceState({}, '', '/?tab=profile');
             }
         }
         
+        // Store selected filter values
+        let selectedMonthQuotations = '';
+        let selectedMonthInvoices = '';
+        let selectedPaymentStatusInvoices = '';
+        let selectedCurrency = 'INR';
+        let selectedPaymentStatus = 'unpaid';
+        let selectedBulkPaymentStatus = 'all';
+
+        // Helper function to close dropdown
+        function closeDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            if (dropdown) {
+                const dropdownContainer = dropdown.closest('.dropdown');
+                if (dropdownContainer) {
+                    const label = dropdownContainer.querySelector('label[tabindex="0"]');
+                    const menu = dropdownContainer.querySelector('ul[tabindex="0"]');
+                    if (label) {
+                        label.blur();
+                    }
+                    if (menu) {
+                        menu.blur();
+                    }
+                }
+            }
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown label[tabindex="0"]').forEach(label => {
+                    label.blur();
+                });
+            }
+        });
+
+        // Dropdown selection handlers
+        function selectMonthFilter(type, value, label) {
+            if (type === 'quotations') {
+                selectedMonthQuotations = value;
+                const labelEl = document.getElementById('monthFilterQuotationsLabel');
+                const span = labelEl.querySelector('span');
+                if (span) span.textContent = label;
+                else labelEl.textContent = label;
+                closeDropdown('monthFilterQuotations');
+            } else {
+                selectedMonthInvoices = value;
+                const labelEl = document.getElementById('monthFilterInvoicesLabel');
+                const span = labelEl.querySelector('span');
+                if (span) span.textContent = label;
+                else labelEl.textContent = label;
+                closeDropdown('monthFilterInvoices');
+            }
+            filterTable(type);
+        }
+
+        function selectPaymentStatusFilter(value, label) {
+            selectedPaymentStatusInvoices = value;
+            const labelEl = document.getElementById('paymentStatusFilterInvoicesLabel');
+            const span = labelEl.querySelector('span');
+            if (span) span.textContent = label;
+            else labelEl.textContent = label;
+            closeDropdown('paymentStatusFilterInvoices');
+            filterTable('invoices');
+        }
+
+        function selectCurrency(value, label) {
+            selectedCurrency = value;
+            document.getElementById('currencyLabel').textContent = label;
+            const currencyLabel = document.getElementById('currencyLabel');
+            if (currencyLabel) {
+                const dropdown = currencyLabel.closest('.dropdown');
+                if (dropdown) {
+                    const menu = dropdown.querySelector('ul[tabindex="0"]');
+                    currencyLabel.blur();
+                    if (menu) menu.blur();
+                }
+            }
+            handleCurrencyChange();
+        }
+
+        function selectPaymentStatus(value, label) {
+            selectedPaymentStatus = value;
+            document.getElementById('paymentStatusLabel').textContent = label;
+            const paymentStatusLabel = document.getElementById('paymentStatusLabel');
+            if (paymentStatusLabel) {
+                const dropdown = paymentStatusLabel.closest('.dropdown');
+                if (dropdown) {
+                    const menu = dropdown.querySelector('ul[tabindex="0"]');
+                    paymentStatusLabel.blur();
+                    if (menu) menu.blur();
+                }
+            }
+        }
+
+        function selectBulkPaymentStatus(value, label) {
+            selectedBulkPaymentStatus = value;
+            document.getElementById('paymentStatusFilterLabel').textContent = label;
+            closeDropdown('paymentStatusFilter');
+        }
+
         function filterTable(type) {
             const searchInput = document.getElementById(`search${type.charAt(0).toUpperCase() + type.slice(1)}`);
-            const monthFilter = document.getElementById(`monthFilter${type.charAt(0).toUpperCase() + type.slice(1)}`);
             const table = document.getElementById(`${type}Table`);
             const mobileContainer = document.getElementById(`${type}TableMobile`);
             
             const searchTerm = searchInput.value.toLowerCase();
-            const selectedMonth = monthFilter.value;
+            const selectedMonth = type === 'quotations' ? selectedMonthQuotations : selectedMonthInvoices;
             
             // Get payment status filter for invoices
             let selectedPaymentStatus = '';
@@ -728,7 +1306,7 @@
             // Page number buttons
             for (let i = startPage; i <= endPage; i++) {
                 if (i === currentPage) {
-                    html += `<button class="px-3 py-1 bg-${color}-600 text-white rounded">${i}</button>`;
+                    html += `<button class="px-3 py-1 text-white rounded" style="background-color: #6366f1;">${i}</button>`;
                 } else {
                     html += `<button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50" onclick="changePage('${type}', ${i})">${i}</button>`;
                 }
@@ -761,17 +1339,12 @@
             const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
             
             const searchInput = document.getElementById(`search${type.charAt(0).toUpperCase() + type.slice(1)}`);
-            const monthFilter = document.getElementById(`monthFilter${type.charAt(0).toUpperCase() + type.slice(1)}`);
             
             const searchTerm = searchInput.value.toLowerCase();
-            const selectedMonth = monthFilter.value;
+            const selectedMonth = type === 'quotations' ? selectedMonthQuotations : selectedMonthInvoices;
             
             // Get payment status filter for invoices
-            let selectedPaymentStatus = '';
-            if (type === 'invoices') {
-                const paymentStatusFilter = document.getElementById('paymentStatusFilterInvoices');
-                selectedPaymentStatus = paymentStatusFilter ? paymentStatusFilter.value : '';
-            }
+            const selectedPaymentStatus = type === 'invoices' ? selectedPaymentStatusInvoices : '';
             
             let visibleRows = [];
             for (let row of rows) {
@@ -801,20 +1374,31 @@
         
         function resetFilters(type) {
             document.getElementById(`search${type.charAt(0).toUpperCase() + type.slice(1)}`).value = '';
-            document.getElementById(`monthFilter${type.charAt(0).toUpperCase() + type.slice(1)}`).value = '';
+            
+            // Reset month filter
+            if (type === 'quotations') {
+                selectedMonthQuotations = '';
+                const labelEl = document.getElementById('monthFilterQuotationsLabel');
+                const span = labelEl.querySelector('span');
+                if (span) span.textContent = 'All Months';
+                else labelEl.textContent = 'All Months';
+                currentPageQuotations = 1;
+            } else {
+                selectedMonthInvoices = '';
+                const labelEl = document.getElementById('monthFilterInvoicesLabel');
+                const span = labelEl.querySelector('span');
+                if (span) span.textContent = 'All Months';
+                else labelEl.textContent = 'All Months';
+                currentPageInvoices = 1;
+            }
             
             // Reset payment status filter for invoices
             if (type === 'invoices') {
-                const paymentStatusFilter = document.getElementById('paymentStatusFilterInvoices');
-                if (paymentStatusFilter) {
-                    paymentStatusFilter.value = '';
-                }
-            }
-            
-            if (type === 'quotations') {
-                currentPageQuotations = 1;
-            } else {
-                currentPageInvoices = 1;
+                selectedPaymentStatusInvoices = '';
+                const labelEl = document.getElementById('paymentStatusFilterInvoicesLabel');
+                const span = labelEl.querySelector('span');
+                if (span) span.textContent = 'All Status';
+                else labelEl.textContent = 'All Status';
             }
             
             filterTable(type);
@@ -853,97 +1437,102 @@
 
     <!-- Create Document Modal -->
     <dialog id="createModal" class="modal">
-        <div class="modal-box max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="modal-box max-w-6xl w-full max-h-[90vh] overflow-y-auto p-3 sm:p-6">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10">✕</button>
             </form>
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-2xl" id="modalTitle">Create Document</h3>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                <h3 class="font-bold text-lg sm:text-2xl" id="modalTitle">Create Document</h3>
                 
-                <div class="flex items-center gap-4">
-                    <label class="label cursor-pointer gap-2">
-                        <input type="radio" name="documentType" value="invoice" class="radio radio-primary" checked onchange="setDocumentType('invoice')" />
-                        <span class="label-text font-medium">Invoice</span>
+                <div class="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                    <label class="label cursor-pointer gap-2 flex-1 sm:flex-none">
+                        <input type="radio" name="documentType" value="invoice" class="radio radio-primary radio-sm" checked onchange="setDocumentType('invoice')" />
+                        <span class="label-text font-medium text-sm sm:text-base">Invoice</span>
                     </label>
-                    <label class="label cursor-pointer gap-2">
-                        <input type="radio" name="documentType" value="quotation" class="radio radio-primary" onchange="setDocumentType('quotation')" />
-                        <span class="label-text font-medium">Quotation</span>
+                    <label class="label cursor-pointer gap-2 flex-1 sm:flex-none">
+                        <input type="radio" name="documentType" value="quotation" class="radio radio-primary radio-sm" onchange="setDocumentType('quotation')" />
+                        <span class="label-text font-medium text-sm sm:text-base">Quotation</span>
                     </label>
                 </div>
             </div>
             
-            <form id="quotationForm" class="space-y-6">
+            <form id="quotationForm" class="space-y-4 sm:space-y-6">
                 <!-- Basic Info -->
-                <div class="grid grid-cols-4 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-semibold text-sm" id="invoiceNoLabel">Invoice Number</span></label>
+                        <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm" id="invoiceNoLabel">Invoice Number</span></label>
                         <input type="text" id="quotation_no" class="input input-bordered input-sm w-full" placeholder="INV/25-26/001" required>
                     </div>
                     <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-semibold text-sm">Date</span></label>
+                        <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Date</span></label>
                         <input type="date" id="date" class="input input-bordered input-sm w-full" required>
                     </div>
                     <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-semibold text-sm">Currency</span></label>
-                        <select id="currency" class="select select-bordered select-sm w-full" onchange="handleCurrencyChange()">
-                            <option value="USD">USD ($)</option>
-                            <option value="INR" selected>INR (₹)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GBP">GBP (£)</option>
-                        </select>
+                        <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Currency</span></label>
+                        <div class="dropdown w-full">
+                            <label tabindex="0" class="btn btn-sm w-full justify-between" id="currencyLabel">INR (₹)</label>
+                            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-full z-[1]">
+                                <li><a onclick="selectCurrency('USD', 'USD ($)')">USD ($)</a></li>
+                                <li><a onclick="selectCurrency('INR', 'INR (₹)')">INR (₹)</a></li>
+                                <li><a onclick="selectCurrency('EUR', 'EUR (€)')">EUR (€)</a></li>
+                                <li><a onclick="selectCurrency('GBP', 'GBP (£)')">GBP (£)</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="form-control" id="paymentStatusField">
-                        <label class="label py-1"><span class="label-text font-semibold text-sm">Payment Status</span></label>
-                        <select id="payment_status" class="select select-bordered select-sm w-full">
-                            <option value="unpaid" selected>Unpaid</option>
-                            <option value="paid">Paid</option>
-                        </select>
+                        <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Payment Status</span></label>
+                        <div class="dropdown w-full">
+                            <label tabindex="0" class="btn btn-sm w-full justify-between" id="paymentStatusLabel">Unpaid</label>
+                            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-full z-[1]">
+                                <li><a onclick="selectPaymentStatus('unpaid', 'Unpaid')">Unpaid</a></li>
+                                <li><a onclick="selectPaymentStatus('paid', 'Paid')">Paid</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <!-- GST Type, Bill To, and Phone Number in same row -->
-                <div class="grid grid-cols-4 gap-4">
-                    
+                <!-- GST Type, Bill To, and Phone Number -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Name)</span></label>
+                        <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Bill To (Name)</span></label>
                         <input type="text" id="client_name" class="input input-bordered input-sm" placeholder="Client Name" required>
                     </div>
                     <div class="form-control">
-                        <label class="label py-1"><span class="label-text font-semibold text-sm">Phone Number</span></label>
+                        <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Phone Number</span></label>
                         <input type="tel" id="client_phone" class="input input-bordered input-sm" placeholder="+91 1234567890">
                     </div>
-                    <div id="gstTypeSection" style="display: none;">
-                        <label class="label py-1"><span class="label-text font-semibold text-sm">GST Type</span></label>
-                        <div class="flex gap-4">
-                            <label class="label cursor-pointer gap-2">
+                    <div id="gstTypeSection" class="form-control sm:col-span-2 lg:col-span-1" style="display: none;">
+                        <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">GST Type</span></label>
+                        <div class="flex gap-2 sm:gap-4">
+                            <label class="label cursor-pointer gap-1 sm:gap-2">
                                 <input type="radio" name="gst_type" value="interstate" class="radio radio-primary radio-sm" onchange="handleGstTypeChange()" />
                                 <span class="label-text text-xs">Interstate</span>
                             </label>
-                            <label class="label cursor-pointer gap-2">
+                            <label class="label cursor-pointer gap-1 sm:gap-2">
                                 <input type="radio" name="gst_type" value="intrastate" class="radio radio-primary radio-sm" checked onchange="handleGstTypeChange()" />
                                 <span class="label-text text-xs">Intrastate</span>
                             </label>
                         </div>
                     </div>
-                    <div></div>
+                    <div class="hidden lg:block"></div>
                 </div>
                 <div class="form-control">
-                    <label class="label py-1"><span class="label-text font-semibold text-sm">Bill To (Address)</span></label>
+                    <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Bill To (Address)</span></label>
                     <textarea id="client_address" class="textarea textarea-bordered textarea-sm" rows="2" placeholder="Address line 1&#10;Address line 2" required></textarea>
                 </div>
                 
                 <!-- Items Section -->
                 <div class="mt-4">
                     <div class="flex justify-between items-center mb-2">
-                        <label class="label-text font-semibold text-sm">Items</label>
-                        <button type="button" onclick="addItem()" class="btn btn-xs" style="background-color: #10b981; color: white;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <label class="label-text font-semibold text-xs sm:text-sm">Items</label>
+                        <button type="button" onclick="addItem()" class="btn btn-xs sm:btn-sm" style="background-color: #6366f1; color: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
-                            Add Item
+                            <span class="hidden sm:inline">Add Item</span>
                         </button>
                     </div>
-                    <div class="border border-gray-300" style="border-radius: 0;">
-                        <table class="w-full text-xs" style="border-radius: 0; border-collapse: collapse;">
+                    <div class="border border-gray-300 overflow-x-auto" style="border-radius: 0;">
+                        <table class="w-full text-xs min-w-[600px]" style="border-radius: 0; border-collapse: collapse;">
                             <thead>
                                 <tr class="bg-gray-100 border-b border-gray-300">
                                     <th class="px-2 py-2 text-left font-semibold w-8">#</th>
@@ -955,7 +1544,7 @@
                                     <th class="px-2 py-2 w-8"></th>
                                 </tr>
                             </thead>
-                            <tbody id="itemsTableBody">
+                            <tbody id="modalItemsTableBody">
                                 <!-- Items will be added here -->
                             </tbody>
                         </table>
@@ -964,16 +1553,16 @@
                 
                 <!-- GST Fields Section -->
                 <div id="gstFieldsSection" class="mt-4" style="display: none;">
-                    <div class="flex justify-end">
-                        <div class="w-64 space-y-2">
+                    <div class="flex justify-start sm:justify-end">
+                        <div class="w-full sm:w-64 space-y-2">
                             <!-- Intrastate: CGST and SGST -->
                             <div id="intrastateGstFields" style="display: none;">
-                                <div class="flex gap-2 items-end">
-                                    <div class="form-control flex-1">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="form-control">
                                         <label class="label py-0"><span class="label-text text-xs">CGST (%)</span></label>
                                         <input type="number" id="cgst_rate" class="input input-bordered input-xs" value="9" step="0.01" min="0" max="100" onchange="calculateGst()">
                                     </div>
-                                    <div class="form-control flex-1">
+                                    <div class="form-control">
                                         <label class="label py-0"><span class="label-text text-xs">SGST (%)</span></label>
                                         <input type="number" id="sgst_rate" class="input input-bordered input-xs" value="9" step="0.01" min="0" max="100" onchange="calculateGst()">
                                     </div>
@@ -993,34 +1582,34 @@
                 <!-- Payment Info -->
                 <div id="paymentSection">
                     <div class="divider my-4">Payment Information</div>
-                    <div class="grid grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold text-sm">Bank Name</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Bank Name</span></label>
                             <input type="text" id="bank_name" class="input input-bordered input-sm" placeholder="Canara Bank"
                                    value="{{ current_user.bank_name or '' }}">
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold text-sm">Branch</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Branch</span></label>
                             <input type="text" id="branch_name" class="input input-bordered input-sm" placeholder="Branch Name"
                                    value="{{ current_user.branch_name or '' }}">
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold text-sm">Account Name</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Account Name</span></label>
                             <input type="text" id="account_name" class="input input-bordered input-sm" placeholder="Account Holder"
                                    value="{{ current_user.account_name or '' }}">
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold text-sm">Account No</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Account No</span></label>
                             <input type="text" id="account_number" class="input input-bordered input-sm" placeholder="1234567890"
                                    value="{{ current_user.account_number or '' }}">
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold text-sm">IFSC Code</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">IFSC Code</span></label>
                             <input type="text" id="ifsc_code" class="input input-bordered input-sm" placeholder="IFSC Code"
                                    value="{{ current_user.ifsc_code or '' }}">
                         </div>
                         <div class="form-control">
-                            <label class="label py-1"><span class="label-text font-semibold text-sm">Gpay / PhonePe</span></label>
+                            <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">Gpay / PhonePe</span></label>
                             <input type="text" id="gpay_phonepe" class="input input-bordered input-sm" placeholder="+91 9994164140"
                                    value="{{ current_user.gpay_phonepe or '' }}">
                         </div>
@@ -1028,16 +1617,17 @@
                 </div>
             </form>
             
-            <div class="modal-action">
-                <button onclick="saveQuotation()" class="btn btn-primary">
+            <div class="modal-action flex-col sm:flex-row gap-2 mt-4">
+                <form method="dialog" class="w-full sm:w-auto order-2 sm:order-1">
+                    <button class="btn btn-ghost w-full sm:w-auto">Cancel</button>
+                </form>
+                <button onclick="saveQuotation()" class="btn btn-primary w-full sm:w-auto order-1 sm:order-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                     </svg>
-                    <span id="saveButtonText">Save & Generate PDF</span>
+                    <span id="saveButtonText" class="hidden sm:inline">Save & Generate PDF</span>
+                    <span class="sm:hidden">Save & PDF</span>
                 </button>
-                <form method="dialog">
-                    <button class="btn">Cancel</button>
-                </form>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">
@@ -1086,11 +1676,14 @@
                     <label class="label">
                         <span class="label-text">Invoice Payment Status</span>
                     </label>
-                    <select id="paymentStatusFilter" class="select select-bordered w-full">
-                        <option value="all">All Invoices</option>
-                        <option value="paid">Paid Only</option>
-                        <option value="unpaid">Unpaid Only</option>
-                    </select>
+                    <div class="dropdown w-full">
+                        <label tabindex="0" class="btn w-full justify-between" id="paymentStatusFilterLabel">All Invoices</label>
+                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-full z-[1]" id="paymentStatusFilter">
+                            <li><a onclick="selectBulkPaymentStatus('all', 'All Invoices')">All Invoices</a></li>
+                            <li><a onclick="selectBulkPaymentStatus('paid', 'Paid Only')">Paid Only</a></li>
+                            <li><a onclick="selectBulkPaymentStatus('unpaid', 'Unpaid Only')">Unpaid Only</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             
@@ -1098,7 +1691,7 @@
             <div id="exportProgress" class="hidden space-y-4">
                 <div class="text-sm font-medium text-gray-700" id="progressText">Preparing export...</div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    <div id="progressBar" class="h-2.5 rounded-full transition-all duration-300" style="width: 0%; background-color: #6366f1;"></div>
                 </div>
                 <div class="text-xs text-gray-500" id="progressDetails">Getting ready...</div>
             </div>
@@ -1163,38 +1756,59 @@
             const toastContainer = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             
+            let bgColor = '';
             let iconSvg = '';
-            let alertClass = 'alert-info';
+            let iconColor = '';
             
             if (type === 'success') {
-                alertClass = 'alert-success';
-                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+                bgColor = 'bg-green-50 border-green-200';
+                iconColor = 'text-green-600';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
             } else if (type === 'error') {
-                alertClass = 'alert-error';
-                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+                bgColor = 'bg-red-50 border-red-200';
+                iconColor = 'text-red-600';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
             } else if (type === 'warning') {
-                alertClass = 'alert-warning';
-                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
+                bgColor = 'bg-yellow-50 border-yellow-200';
+                iconColor = 'text-yellow-600';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>';
             } else {
-                alertClass = 'alert-info';
-                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                bgColor = 'bg-blue-50 border-blue-200';
+                iconColor = 'text-blue-600';
+                iconSvg = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
             }
             
-            toast.className = `alert ${alertClass} shadow-lg mb-2`;
+            toast.className = `${bgColor} border rounded-lg px-4 py-3 shadow-md mb-3 flex items-center gap-3 toast-item`;
             toast.innerHTML = `
-                ${iconSvg}
-                <span>${message}</span>
+                <div class="${iconColor} flex-shrink-0">
+                    ${iconSvg}
+                </div>
+                <span class="text-sm font-medium text-gray-800 flex-1">${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             `;
             
             toastContainer.appendChild(toast);
             
-            // Auto remove after 3 seconds
+            // Trigger animation
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Auto remove after 4 seconds
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(100%)';
-                toast.style.transition = 'all 0.3s ease-out';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 4000);
         }
 
         // Load saved items for auto-suggest
@@ -1209,8 +1823,17 @@
             }
         }
 
+        // Track if modal has been initialized to prevent double initialization
+        let modalInitialized = false;
+
         // Initialize modal when opened
         function initModal() {
+            // Prevent double initialization
+            if (modalInitialized) {
+                return;
+            }
+            modalInitialized = true;
+
             editMode = false;
             editingQuotationId = null;
             duplicateMode = false;
@@ -1223,14 +1846,22 @@
             document.getElementById('date').valueAsDate = new Date();
             documentType = 'invoice';
             setDocumentType('invoice');
+            // Reset dropdowns
+            selectedCurrency = 'INR';
+            selectedPaymentStatus = 'unpaid';
+            document.getElementById('currencyLabel').textContent = 'INR (₹)';
+            document.getElementById('paymentStatusLabel').textContent = 'Unpaid';
             // Reset GST fields
             document.getElementById('cgst_rate').value = '9';
             document.getElementById('sgst_rate').value = '9';
             document.getElementById('igst_rate').value = '18';
             document.querySelector('input[name="gst_type"][value="intrastate"]').checked = true;
             handleCurrencyChange();
-            addItem();
-            loadSavedItems(); // Refresh items for auto-suggest
+            // Ensure modal is visible before adding items
+            setTimeout(() => {
+                addItem();
+                loadSavedItems(); // Refresh items for auto-suggest
+            }, 100);
         }
         
         // Open modal in edit mode
@@ -1276,8 +1907,12 @@
                 document.getElementById('client_name').value = clientName;
                 document.getElementById('client_address').value = clientAddress;
                 document.getElementById('client_phone').value = clientPhone;
-                document.getElementById('currency').value = data.currency;
-                document.getElementById('payment_status').value = data.payment_status || 'unpaid';
+                selectedCurrency = data.currency;
+                const currencyLabels = {'USD': 'USD ($)', 'INR': 'INR (₹)', 'EUR': 'EUR (€)', 'GBP': 'GBP (£)'};
+                document.getElementById('currencyLabel').textContent = currencyLabels[data.currency] || 'INR (₹)';
+                selectedPaymentStatus = data.payment_status || 'unpaid';
+                document.getElementById('paymentStatusLabel').textContent = (data.payment_status || 'unpaid').charAt(0).toUpperCase() + (data.payment_status || 'unpaid').slice(1);
+                handleCurrencyChange();
                 document.getElementById('bank_name').value = data.bank_name || '';
                 document.getElementById('branch_name').value = data.branch_name || '';
                 document.getElementById('account_name').value = data.account_name || '';
@@ -1319,6 +1954,9 @@
                     });
                 });
                 renderItems();
+                
+                // Reset initialization flag for edit mode
+                modalInitialized = true;
                 
                 // Open modal
                 document.getElementById('createModal').showModal();
@@ -1373,8 +2011,12 @@
                 document.getElementById('client_name').value = clientName;
                 document.getElementById('client_address').value = clientAddress;
                 document.getElementById('client_phone').value = clientPhone;
-                document.getElementById('currency').value = data.currency;
-                document.getElementById('payment_status').value = data.payment_status || 'unpaid';
+                selectedCurrency = data.currency;
+                const currencyLabels = {'USD': 'USD ($)', 'INR': 'INR (₹)', 'EUR': 'EUR (€)', 'GBP': 'GBP (£)'};
+                document.getElementById('currencyLabel').textContent = currencyLabels[data.currency] || 'INR (₹)';
+                selectedPaymentStatus = data.payment_status || 'unpaid';
+                document.getElementById('paymentStatusLabel').textContent = (data.payment_status || 'unpaid').charAt(0).toUpperCase() + (data.payment_status || 'unpaid').slice(1);
+                handleCurrencyChange();
                 document.getElementById('bank_name').value = data.bank_name || '';
                 document.getElementById('branch_name').value = data.branch_name || '';
                 document.getElementById('account_name').value = data.account_name || '';
@@ -1417,6 +2059,9 @@
                 });
                 renderItems();
                 
+                // Reset initialization flag for duplicate mode
+                modalInitialized = true;
+                
                 // Open modal
                 document.getElementById('createModal').showModal();
                 
@@ -1427,21 +2072,34 @@
         
         // Handle modal open - only init for create mode, not edit mode
         const modal = document.getElementById('createModal');
+        
+        // Reset initialization flag when modal closes
+        modal.addEventListener('close', function() {
+            modalInitialized = false;
+        });
+        
         const observer = new MutationObserver(function(mutations) {
-            if (modal.hasAttribute('open') && !editMode && !duplicateMode) {
-                initModal();
+            if (modal.hasAttribute('open') && !editMode && !duplicateMode && !modalInitialized) {
+                // Wait a bit for modal to be fully rendered
+                setTimeout(() => {
+                    if (!modalInitialized) {
+                        initModal();
+                    }
+                }, 50);
             }
         });
         observer.observe(modal, { attributes: true, attributeFilter: ['open'] });
         
-        // Also handle button clicks for create
+        // Also handle button clicks for create - but only if not already initialized
         document.querySelectorAll('[onclick*="createModal"]').forEach(btn => {
             btn.addEventListener('click', function() {
+                // Reset flag when opening modal via button
+                modalInitialized = false;
                 setTimeout(() => {
-                    if (!editMode) {
+                    if (!editMode && !duplicateMode && !modalInitialized) {
                         initModal();
                     }
-                }, 50);
+                }, 100);
             });
         });
 
@@ -1472,7 +2130,7 @@
         }
         
         function handleCurrencyChange() {
-            const currency = document.getElementById('currency').value;
+            const currency = selectedCurrency;
             const gstTypeSection = document.getElementById('gstTypeSection');
             const gstFieldsSection = document.getElementById('gstFieldsSection');
             
@@ -1524,7 +2182,11 @@
         }
 
         function renderItems() {
-            const container = document.getElementById('itemsTableBody');
+            const container = document.getElementById('modalItemsTableBody');
+            if (!container) {
+                console.error('Items table container not found');
+                return;
+            }
             if (items.length === 0) {
                 container.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">No items added yet. Click "Add Item" to start.</td></tr>';
                 return;
@@ -1534,24 +2196,24 @@
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                         <td class="px-2 py-2 text-center">${index + 1}</td>
                         <td class="px-2 py-2 relative">
-                            <input type="text" placeholder="Service description" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500 autocomplete-input" 
+                            <input type="text" placeholder="Service description" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none autocomplete-input" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''" 
                                value="${(item.description || '').replace(/"/g, '&quot;')}" oninput="updateItem(${item.id}, 'description', this.value)" onfocus="showSuggestions(${item.id}, this.value)" onkeydown="handleKeydown(event, ${item.id})">
                             <div id="suggestions-${item.id}" class="autocomplete-suggestions hidden absolute z-50 bg-white border border-gray-300 rounded shadow-lg max-h-48 overflow-y-auto w-full"></div>
                         </td>
                         <td class="px-2 py-2">
-                            <input type="text" placeholder="HSN" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                            <input type="text" placeholder="HSN" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''" 
                                value="${(item.hsn_code || '').replace(/"/g, '&quot;')}" oninput="updateItem(${item.id}, 'hsn_code', this.value)">
                         </td>
                         <td class="px-2 py-2">
-                            <input type="text" placeholder="Sep 2025" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                            <input type="text" placeholder="Sep 2025" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''" 
                                value="${(item.month || '').replace(/"/g, '&quot;')}" oninput="updateItem(${item.id}, 'month', this.value)">
                         </td>
                         <td class="px-2 py-2">
-                            <input type="number" placeholder="0" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                            <input type="number" placeholder="0" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''" 
                                value="${item.rate || ''}" oninput="updateItem(${item.id}, 'rate', this.value)">
                         </td>
                         <td class="px-2 py-2">
-                            <input type="number" placeholder="0.00" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none focus:border-blue-500" 
+                            <input type="number" placeholder="0.00" class="w-full px-2 py-1 text-xs border border-gray-300 focus:outline-none" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor=''" 
                                value="${item.amount || ''}" oninput="updateItem(${item.id}, 'amount', this.value)">
                         </td>
                         <td class="px-2 py-2 text-center">
@@ -1591,7 +2253,7 @@
             }
 
             suggestionsDiv.innerHTML = filtered.slice(0, 5).map(item => `
-                <div class="px-3 py-2 hover:bg-blue-50 cursor-pointer suggestion-item" onclick="selectSuggestion(${itemId}, '${item.description.replace(/'/g, "\\'")}', '${(item.hsn_code || '').replace(/'/g, "\\'")}', '${(item.default_rate || '').replace(/'/g, "\\'")}')">
+                <div class="px-3 py-2 cursor-pointer suggestion-item" style="hover:background-color: rgba(99, 102, 241, 0.1);" onmouseover="this.style.backgroundColor='rgba(99, 102, 241, 0.1)'" onmouseout="this.style.backgroundColor=''" onclick="selectSuggestion(${itemId}, '${item.description.replace(/'/g, "\\'")}', '${(item.hsn_code || '').replace(/'/g, "\\'")}', '${(item.default_rate || '').replace(/'/g, "\\'")}')">
                     <div class="font-medium text-sm">${item.description}</div>
                     ${item.hsn_code ? `<div class="text-xs text-gray-500">HSN: ${item.hsn_code}</div>` : ''}
                     ${item.default_rate ? `<div class="text-xs text-gray-500">Rate: ${item.default_rate}</div>` : ''}
@@ -1658,7 +2320,7 @@
         });
 
         async function saveQuotation() {
-            const currency = document.getElementById('currency').value;
+            const currency = selectedCurrency;
             const clientPhone = document.getElementById('client_phone').value;
             let toAddress = document.getElementById('client_name').value + '\n' + document.getElementById('client_address').value;
             if (clientPhone) {
@@ -1671,7 +2333,7 @@
                 client_phone: clientPhone,
                 currency: currency,
                 document_type: documentType,
-                payment_status: document.getElementById('payment_status').value,
+                payment_status: selectedPaymentStatus,
                 bank_name: document.getElementById('bank_name').value,
                 branch_name: document.getElementById('branch_name').value,
                 account_name: document.getElementById('account_name').value,
@@ -1740,7 +2402,7 @@
             const toDate = document.getElementById('exportToDate').value;
             const includeQuotations = document.getElementById('includeQuotations').checked;
             const includeInvoices = document.getElementById('includeInvoices').checked;
-            const paymentStatus = document.getElementById('paymentStatusFilter').value;
+            const paymentStatus = selectedBulkPaymentStatus;
             
             if (!fromDate || !toDate) {
                 showToast('Please select both from and to dates', 'warning');
@@ -2009,6 +2671,198 @@
                 }
             }
         });
+
+        // Profile page JavaScript
+        // Handle change password form submission
+        if (document.getElementById('changePasswordForm')) {
+            document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Validate passwords match
+                if (newPassword !== confirmPassword) {
+                    showToast('New passwords do not match', 'error');
+                    return;
+                }
+                
+                // Validate password length
+                if (newPassword.length < 6) {
+                    showToast('New password must be at least 6 characters long', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/profile/change-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_password: newPassword
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        showToast('Password changed successfully!', 'success');
+                        // Clear form
+                        document.getElementById('changePasswordForm').reset();
+                    } else {
+                        showToast('Error: ' + (data.error || 'Failed to change password'), 'error');
+                    }
+                } catch (error) {
+                    showToast('Error changing password: ' + error.message, 'error');
+                }
+            });
+        }
+
+        // Settings page JavaScript
+        // Handle payment info form submission
+        if (document.getElementById('paymentInfoForm')) {
+            document.getElementById('paymentInfoForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const paymentData = {
+                    bank_name: document.getElementById('paymentBankName').value,
+                    branch_name: document.getElementById('paymentBranchName').value,
+                    account_name: document.getElementById('paymentAccountName').value,
+                    account_number: document.getElementById('paymentAccountNumber').value,
+                    ifsc_code: document.getElementById('paymentIfscCode').value,
+                    gpay_phonepe: document.getElementById('paymentGpayPhonepe').value
+                };
+
+                try {
+                    const response = await fetch('/api/settings/payment-info', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(paymentData)
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        showToast('Payment information updated successfully!', 'success');
+                    } else {
+                        showToast('Error: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error updating payment information: ' + error.message, 'error');
+                }
+            });
+        }
+
+        // Handle prefix form submission
+        if (document.getElementById('prefixForm')) {
+            document.getElementById('prefixForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const quotationPrefix = document.getElementById('quotationPrefix').value;
+                const invoicePrefix = document.getElementById('invoicePrefix').value;
+
+                try {
+                    const response = await fetch('/api/settings/prefixes', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            quotation_prefix: quotationPrefix,
+                            invoice_prefix: invoicePrefix
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        showToast('Prefixes updated successfully!', 'success');
+                    } else {
+                        showToast('Error: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error updating prefixes: ' + error.message, 'error');
+                }
+            });
+        }
+
+        // Handle item form submission
+        if (document.getElementById('addItemForm')) {
+            document.getElementById('addItemForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const description = document.getElementById('itemDescription').value;
+                const hsnCode = document.getElementById('itemHsn').value;
+                const defaultRate = document.getElementById('itemRate').value;
+
+                try {
+                    const response = await fetch('/api/items', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            description: description,
+                            hsn_code: hsnCode,
+                            default_rate: defaultRate
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        showToast('Item added successfully!', 'success');
+                        // Reload page to show new item
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showToast('Error: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    showToast('Error adding item: ' + error.message, 'error');
+                }
+            });
+        }
+
+        async function deleteItem(itemId) {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/items/${itemId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showToast('Item deleted successfully!', 'success');
+                    // Remove row from table
+                    const row = document.querySelector(`tr[data-item-id="${itemId}"]`);
+                    if (row) {
+                        row.remove();
+                    }
+                    // Reload if no items left or if table is empty
+                    const tbody = document.getElementById('itemsTableBody');
+                    if (tbody && tbody.querySelectorAll('tr').length <= 1) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }
+                } else {
+                    showToast('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting item: ' + error.message, 'error');
+            }
+        }
     </script>
     <style>
         .autocomplete-suggestions {
@@ -2017,7 +2871,7 @@
             margin-top: 2px;
         }
         .suggestion-item.highlighted {
-            background-color: #dbeafe;
+            background-color: rgba(99, 102, 241, 0.1);
         }
         
         /* Action menu dropdown styles */
@@ -2068,25 +2922,23 @@
         /* Toast animations */
         #toastContainer {
             position: fixed !important;
-            top: 1rem !important;
-            right: 1rem !important;
+            top: 1.5rem !important;
+            right: 1.5rem !important;
             z-index: 9999 !important;
+            max-width: 400px;
         }
-        
-        #toastContainer .alert {
-            animation: slideInRight 0.3s ease-out;
+
+        .toast-item {
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             min-width: 300px;
+            max-width: 100%;
         }
         
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+        .toast-item:hover {
+            transform: translateX(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </body>
