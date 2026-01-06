@@ -1502,16 +1502,16 @@
                     </div>
                     <div id="gstTypeSection" class="form-control sm:col-span-2 lg:col-span-1" style="display: none;">
                         <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">GST Type</span></label>
-                        <div class="flex gap-2 sm:gap-4 flex-wrap">
-                            <label class="label cursor-pointer gap-1 sm:gap-2">
+                        <div class="flex gap-2 sm:gap-4 flex-nowrap">
+                            <label class="label cursor-pointer gap-1 sm:gap-2 whitespace-nowrap">
                                 <input type="radio" name="gst_type" value="interstate" class="radio radio-primary radio-sm" onchange="handleGstTypeChange()" />
                                 <span class="label-text text-xs">Interstate</span>
                             </label>
-                            <label class="label cursor-pointer gap-1 sm:gap-2">
+                            <label class="label cursor-pointer gap-1 sm:gap-2 whitespace-nowrap">
                                 <input type="radio" name="gst_type" value="intrastate" class="radio radio-primary radio-sm" checked onchange="handleGstTypeChange()" />
                                 <span class="label-text text-xs">Intrastate</span>
                             </label>
-                            <label class="label cursor-pointer gap-1 sm:gap-2">
+                            <label class="label cursor-pointer gap-1 sm:gap-2 whitespace-nowrap">
                                 <input type="radio" name="gst_type" value="no_gst" class="radio radio-primary radio-sm" onchange="handleGstTypeChange()" />
                                 <span class="label-text text-xs">No GST</span>
                             </label>
