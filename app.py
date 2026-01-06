@@ -405,7 +405,7 @@ def create_quotation():
         gst_type = data.get('gst_type')
         currency = data['currency']
         
-        if currency == 'INR' and gst_type:
+        if currency == 'INR' and gst_type and gst_type != 'no_gst':
             if gst_type == 'intrastate':
                 cgst_rate = float(data.get('cgst_rate', 0)) if data.get('cgst_rate') else 0
                 sgst_rate = float(data.get('sgst_rate', 0)) if data.get('sgst_rate') else 0
@@ -478,7 +478,7 @@ def update_quotation(quotation_id):
         gst_type = data.get('gst_type')
         currency = data['currency']
         
-        if currency == 'INR' and gst_type:
+        if currency == 'INR' and gst_type and gst_type != 'no_gst':
             if gst_type == 'intrastate':
                 cgst_rate = float(data.get('cgst_rate', 0)) if data.get('cgst_rate') else 0
                 sgst_rate = float(data.get('sgst_rate', 0)) if data.get('sgst_rate') else 0
@@ -617,7 +617,8 @@ def generate_pdf(quotation_id):
         
         # Calculate GST rows if currency is INR
         final_total = total_amount
-        if quotation.currency == 'INR' and quotation.gst_type:
+        final_display = total_display  # Initialize with default value
+        if quotation.currency == 'INR' and quotation.gst_type and quotation.gst_type != 'no_gst':
             items_html += f'''                        <tr class="total-row-subtotal">
                             <td colspan="3"></td>
                             <td class="text-center" style="border-top: 2px solid #000; font-weight: 700;">Sub Total</td>
@@ -625,7 +626,7 @@ def generate_pdf(quotation_id):
                         </tr>
 '''
             
-            if quotation.gst_type == 'intrastate' and quotation.cgst_rate and quotation.sgst_rate:
+            if quotation.gst_type == 'intrastate' and quotation.cgst_rate is not None and quotation.sgst_rate is not None:
                 cgst_amount = base_amount * float(quotation.cgst_rate) / 100
                 sgst_amount = base_amount * float(quotation.sgst_rate) / 100
                 final_total = base_amount + cgst_amount + sgst_amount
@@ -645,7 +646,7 @@ def generate_pdf(quotation_id):
                             <td class="text-right" style="font-weight: 600;">{sgst_display}</td>
                         </tr>
 '''
-            elif quotation.gst_type == 'interstate' and quotation.igst_rate:
+            elif quotation.gst_type == 'interstate' and quotation.igst_rate is not None:
                 igst_amount = base_amount * float(quotation.igst_rate) / 100
                 final_total = base_amount + igst_amount
                 
@@ -919,7 +920,8 @@ def view_shared_pdf(token):
         
         # Calculate GST rows if currency is INR
         final_total = total_amount
-        if quotation.currency == 'INR' and quotation.gst_type:
+        final_display = total_display  # Initialize with default value
+        if quotation.currency == 'INR' and quotation.gst_type and quotation.gst_type != 'no_gst':
             items_html += f'''                        <tr class="total-row-subtotal">
                             <td colspan="3"></td>
                             <td class="text-center" style="border-top: 2px solid #000; font-weight: 700;">Sub Total</td>
@@ -927,7 +929,7 @@ def view_shared_pdf(token):
                         </tr>
 '''
             
-            if quotation.gst_type == 'intrastate' and quotation.cgst_rate and quotation.sgst_rate:
+            if quotation.gst_type == 'intrastate' and quotation.cgst_rate is not None and quotation.sgst_rate is not None:
                 cgst_amount = base_amount * float(quotation.cgst_rate) / 100
                 sgst_amount = base_amount * float(quotation.sgst_rate) / 100
                 final_total = base_amount + cgst_amount + sgst_amount
@@ -947,7 +949,7 @@ def view_shared_pdf(token):
                             <td class="text-right" style="font-weight: 600;">{sgst_display}</td>
                         </tr>
 '''
-            elif quotation.gst_type == 'interstate' and quotation.igst_rate:
+            elif quotation.gst_type == 'interstate' and quotation.igst_rate is not None:
                 igst_amount = base_amount * float(quotation.igst_rate) / 100
                 final_total = base_amount + igst_amount
                 
@@ -1446,7 +1448,8 @@ def generate_pdf_content(quotation):
         
         # Calculate GST rows if currency is INR
         final_total = total_amount
-        if quotation.currency == 'INR' and quotation.gst_type:
+        final_display = total_display  # Initialize with default value
+        if quotation.currency == 'INR' and quotation.gst_type and quotation.gst_type != 'no_gst':
             items_html += f'''                        <tr class="total-row-subtotal">
                             <td colspan="3"></td>
                             <td class="text-center" style="border-top: 2px solid #000; font-weight: 700;">Sub Total</td>
@@ -1454,7 +1457,7 @@ def generate_pdf_content(quotation):
                         </tr>
 '''
             
-            if quotation.gst_type == 'intrastate' and quotation.cgst_rate and quotation.sgst_rate:
+            if quotation.gst_type == 'intrastate' and quotation.cgst_rate is not None and quotation.sgst_rate is not None:
                 cgst_amount = base_amount * float(quotation.cgst_rate) / 100
                 sgst_amount = base_amount * float(quotation.sgst_rate) / 100
                 final_total = base_amount + cgst_amount + sgst_amount
@@ -1474,7 +1477,7 @@ def generate_pdf_content(quotation):
                             <td class="text-right" style="font-weight: 600;">{sgst_display}</td>
                         </tr>
 '''
-            elif quotation.gst_type == 'interstate' and quotation.igst_rate:
+            elif quotation.gst_type == 'interstate' and quotation.igst_rate is not None:
                 igst_amount = base_amount * float(quotation.igst_rate) / 100
                 final_total = base_amount + igst_amount
                 

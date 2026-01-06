@@ -1502,7 +1502,7 @@
                     </div>
                     <div id="gstTypeSection" class="form-control sm:col-span-2 lg:col-span-1" style="display: none;">
                         <label class="label py-1"><span class="label-text font-semibold text-xs sm:text-sm">GST Type</span></label>
-                        <div class="flex gap-2 sm:gap-4">
+                        <div class="flex gap-2 sm:gap-4 flex-wrap">
                             <label class="label cursor-pointer gap-1 sm:gap-2">
                                 <input type="radio" name="gst_type" value="interstate" class="radio radio-primary radio-sm" onchange="handleGstTypeChange()" />
                                 <span class="label-text text-xs">Interstate</span>
@@ -1510,6 +1510,10 @@
                             <label class="label cursor-pointer gap-1 sm:gap-2">
                                 <input type="radio" name="gst_type" value="intrastate" class="radio radio-primary radio-sm" checked onchange="handleGstTypeChange()" />
                                 <span class="label-text text-xs">Intrastate</span>
+                            </label>
+                            <label class="label cursor-pointer gap-1 sm:gap-2">
+                                <input type="radio" name="gst_type" value="no_gst" class="radio radio-primary radio-sm" onchange="handleGstTypeChange()" />
+                                <span class="label-text text-xs">No GST</span>
                             </label>
                         </div>
                     </div>
@@ -2148,13 +2152,21 @@
             const gstType = document.querySelector('input[name="gst_type"]:checked')?.value || 'intrastate';
             const intrastateFields = document.getElementById('intrastateGstFields');
             const interstateFields = document.getElementById('interstateGstFields');
+            const gstFieldsSection = document.getElementById('gstFieldsSection');
             
-            if (gstType === 'intrastate') {
-                intrastateFields.style.display = 'block';
-                interstateFields.style.display = 'none';
+            if (gstType === 'no_gst') {
+                // Hide all GST fields when "No GST" is selected
+                if (intrastateFields) intrastateFields.style.display = 'none';
+                if (interstateFields) interstateFields.style.display = 'none';
+                if (gstFieldsSection) gstFieldsSection.style.display = 'none';
+            } else if (gstType === 'intrastate') {
+                if (intrastateFields) intrastateFields.style.display = 'block';
+                if (interstateFields) interstateFields.style.display = 'none';
+                if (gstFieldsSection) gstFieldsSection.style.display = 'block';
             } else {
-                intrastateFields.style.display = 'none';
-                interstateFields.style.display = 'block';
+                if (intrastateFields) intrastateFields.style.display = 'none';
+                if (interstateFields) interstateFields.style.display = 'block';
+                if (gstFieldsSection) gstFieldsSection.style.display = 'block';
             }
         }
         
@@ -2353,7 +2365,9 @@
             if (currency === 'INR') {
                 const gstType = document.querySelector('input[name="gst_type"]:checked')?.value || 'intrastate';
                 formData.gst_type = gstType;
-                if (gstType === 'intrastate') {
+                if (gstType === 'no_gst') {
+                    // No GST fields needed for "No GST" option
+                } else if (gstType === 'intrastate') {
                     formData.cgst_rate = document.getElementById('cgst_rate').value || '9';
                     formData.sgst_rate = document.getElementById('sgst_rate').value || '9';
                 } else {

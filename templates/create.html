@@ -311,15 +311,21 @@
             const gstType = document.querySelector('input[name="gst_type"]:checked')?.value || 'intrastate';
             const intrastateFields = document.getElementById('intrastateGstFields');
             const interstateFields = document.getElementById('interstateGstFields');
+            const gstFieldsSection = document.getElementById('gstFieldsSection');
             
-            if (intrastateFields && interstateFields) {
-                if (gstType === 'intrastate') {
-                    intrastateFields.style.display = 'block';
-                    interstateFields.style.display = 'none';
-                } else {
-                    intrastateFields.style.display = 'none';
-                    interstateFields.style.display = 'block';
-                }
+            if (gstType === 'no_gst') {
+                // Hide all GST fields when "No GST" is selected
+                if (intrastateFields) intrastateFields.style.display = 'none';
+                if (interstateFields) interstateFields.style.display = 'none';
+                if (gstFieldsSection) gstFieldsSection.style.display = 'none';
+            } else if (gstType === 'intrastate') {
+                if (intrastateFields) intrastateFields.style.display = 'block';
+                if (interstateFields) interstateFields.style.display = 'none';
+                if (gstFieldsSection) gstFieldsSection.style.display = 'block';
+            } else {
+                if (intrastateFields) intrastateFields.style.display = 'none';
+                if (interstateFields) interstateFields.style.display = 'block';
+                if (gstFieldsSection) gstFieldsSection.style.display = 'block';
             }
         }
         
@@ -456,6 +462,20 @@
                     amount: item.amount
                 }))
             };
+            
+            // Add GST fields if currency is INR
+            if (selectedCurrency === 'INR') {
+                const gstType = document.querySelector('input[name="gst_type"]:checked')?.value || 'intrastate';
+                formData.gst_type = gstType;
+                if (gstType === 'no_gst') {
+                    // No GST fields needed for "No GST" option
+                } else if (gstType === 'intrastate') {
+                    formData.cgst_rate = document.getElementById('cgst_rate')?.value || '9';
+                    formData.sgst_rate = document.getElementById('sgst_rate')?.value || '9';
+                } else {
+                    formData.igst_rate = document.getElementById('igst_rate')?.value || '18';
+                }
+            }
 
             if (!formData.quotation_no || !formData.date || items.length === 0) {
                 alert('Please fill in all required fields and add at least one item');
