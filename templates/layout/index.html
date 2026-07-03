@@ -255,14 +255,16 @@
         }
         
         .bottom-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             gap: 32px;
             margin-bottom: 16px;
         }
         
         .payment-section {
-            grid-column: 1;
+            flex: 1;
+            min-width: 0;
         }
         
         .payment-section h3 {
@@ -358,11 +360,9 @@
         }
         
         .signature-section {
+            flex: 0 0 auto;
             text-align: right;
-            margin-right: 75px;
-            grid-column: 2;
-            overflow: visible;
-            z-index: 10;
+            max-width: 45%;
         }
         
         .signature {
@@ -456,12 +456,13 @@
             }
             
             .bottom-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
                 gap: 32px;
             }
             
             .signature-section {
                 text-align: right;
+                max-width: 100%;
             }
             
             .signature-line {
@@ -560,31 +561,28 @@
                 margin-top: 20px;
                 padding-top: 12px;
                 padding-bottom: 12px;
-                page-break-inside: auto;
-                overflow: hidden;
+                overflow: visible;
             }
             .bottom-grid {
-           
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                page-break-inside: avoid;
                 margin-bottom: 12px;
             }
             
             .signature-section {
+                flex: 0 0 auto;
+                max-width: 45%;
                 page-break-inside: avoid;
-                overflow: visible !important;
-            }
-            
-            .signature {
-                overflow: visible !important;
             }
             
             .signature img {
-                display: block !important;
-                margin-left: auto !important;
-                opacity: 1 !important;
-                visibility: visible !important;
-                filter: none !important;
-                height: 80px !important;
-                width: auto !important;
+                display: block;
+                margin-left: auto;
+                height: 80px;
+                width: auto;
+                max-width: 100%;
             }
           
             .footer {
@@ -608,10 +606,8 @@
                 white-space: nowrap;
                 font-size: 10px;
             }
-            /* Reset content wrapper padding */
             .content-wrapper {
-                padding: 28px 48px 100px 48px;
-                min-height: calc(297mm - 120px);
+                padding: 28px 48px 80px 48px;
             }
         }
     </style>

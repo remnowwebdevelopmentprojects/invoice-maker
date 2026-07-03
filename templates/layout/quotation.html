@@ -255,15 +255,18 @@
         }
         
         .bottom-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             gap: 32px;
             margin-bottom: 16px;
         }
         
         .signature-section {
+            flex: 0 0 auto;
             text-align: right;
-            grid-column: 2;
+            max-width: 45%;
+            margin-left: auto;
         }
         
         .signature {
@@ -353,12 +356,14 @@
             }
             
             .bottom-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
                 gap: 32px;
             }
             
             .signature-section {
                 text-align: right;
+                max-width: 100%;
+                margin-left: 0;
             }
             
             .signature-line {
@@ -457,12 +462,26 @@
                 margin-top: 20px;
                 padding-top: 12px;
                 padding-bottom: 12px;
-                page-break-inside: auto;
-                overflow: hidden;
+                overflow: visible;
             }
             .bottom-grid {
-               
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                page-break-inside: avoid;
                 margin-bottom: 12px;
+            }
+            .signature-section {
+                flex: 0 0 auto;
+                max-width: 45%;
+                page-break-inside: avoid;
+            }
+            .signature img {
+                display: block;
+                margin-left: auto;
+                height: 80px;
+                width: auto;
+                max-width: 100%;
             }
             .footer {
                 position: fixed;
@@ -556,7 +575,6 @@
             <!-- Bottom Section -->
             <div class="bottom-section">
                 <div class="bottom-grid">
-                    <div></div>
                     <!-- Signature -->
                     <div class="signature-section">
                         <div class="signature">
